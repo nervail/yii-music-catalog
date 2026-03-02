@@ -16,6 +16,7 @@ class SiteController extends Controller
 {
 
     public $layout = 'admin';
+
     /**
      * {@inheritdoc}
      */
@@ -26,13 +27,22 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
                         'allow' => true,
+                        'actions' => ['login'],
+                        'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'index'],
                         'allow' => true,
-                        'roles' => ['?'],  // Временно выключил во время разработки
+                        'actions' => ['logout'],
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['error'],
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
                     ],
                 ],
             ],
@@ -82,7 +92,13 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            if (!Yii::$app->user->can('admin')) {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'Нет доступа к админке');
+                return $this->redirect('http://music.local');
+            }
+
+            return $this->redirect(['site/index']);
         }
 
         $model->password = '';
