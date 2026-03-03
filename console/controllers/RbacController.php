@@ -17,7 +17,14 @@ class RbacController extends Controller
         $admin = $auth->createRole('admin');
         $auth->add($admin);
 
+        $moderator = $auth->createRole('moderator');
+        $auth->add($moderator);
+
         $auth->addChild($admin, $user);
-        echo "Roles created: admin, user\n";
+        $auth->addChild($admin, $moderator);
+        $auth->addChild($moderator, $user);
+
+        // $auth->assign($admin, 2);
+        echo "Roles created: admin, user, moderator\n";
     }
 }
