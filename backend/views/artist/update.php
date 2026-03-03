@@ -3,7 +3,7 @@
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = 'Add artist';
+$this->title = 'Update artist';
 ?>
 
 <div class="row justify-content-center pt-5">
@@ -27,7 +27,7 @@ $this->title = 'Add artist';
             </div>
 
             <div class="card-footer">
-                <?= Html::submitButton('Submit', [
+                <?= Html::submitButton('Update', [
                     'class' => 'btn btn-primary'
                 ]) ?>
             </div>

@@ -238,7 +238,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <?= $content ?>
+    <div class="content pl-4 pr-4">
+      <?= $content ?>
+    </div>
   </div>
   <!-- /.content-wrapper -->
 
