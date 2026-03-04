@@ -45,6 +45,9 @@ class SiteController extends Controller
                         'roles' => ['admin'],
                     ],
                 ],
+                'denyCallback' => function ($rule, $action) {
+                    Yii::$app->response->redirect(['/site/login']);
+                }
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
