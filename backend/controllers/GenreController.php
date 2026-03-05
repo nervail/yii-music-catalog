@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use common\models\Artist;
-use common\models\ArtistSearch;
+use common\models\Genre;
+use common\models\GenreSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -13,7 +13,7 @@ use yii\web\NotFoundHttpException;
 /**
  * Site controller
  */
-class ArtistController extends Controller
+class GenreController extends Controller
 {
 
     public $layout = 'admin';
@@ -63,7 +63,7 @@ class ArtistController extends Controller
 
     protected function findModel(int $id)
     {
-        if (($model = Artist::findOne($id)) !== null) {
+        if (($model = Genre::findOne($id)) !== null) {
             return $model;
         }
 
@@ -77,9 +77,9 @@ class ArtistController extends Controller
      */
     public function actionIndex()
     {
-        $searchArtist = new ArtistSearch();
+        $searchArtist = new GenreSearch();
         $dataProvider = $searchArtist->search(Yii::$app->request->queryParams);
-
+        
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchArtist,
@@ -88,11 +88,11 @@ class ArtistController extends Controller
 
     public function actionCreate()
     {
-        $model = new Artist();
+        $model = new Genre();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Successfully added new artist!');
-            return $this->redirect('/artists');
+            Yii::$app->session->setFlash('success', 'Successfully added new genre!');
+            return $this->redirect('/genre');
         }
         return $this->render('create', [
             'model' => $model,

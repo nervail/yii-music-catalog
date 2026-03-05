@@ -71,6 +71,29 @@ use yii\helpers\Url;
                   </li>
                 </ul>
               </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fas fa-circle nav-icon"></i>
+                  <p>
+                    Genres
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="<?= Url::to('/genre') ?>" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Index</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= Url::to('/genre/create') ?>" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Add</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
