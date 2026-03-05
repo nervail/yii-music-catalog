@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\Artist;
+use common\models\ArtistSearch;
 use common\models\LoginForm;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -79,14 +80,12 @@ class ArtistController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Artist::find(),
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-        ]);
+        $searchArtist = new ArtistSearch();
+        $dataProvider = $searchArtist->search(Yii::$app->request->queryParams);
+        
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchArtist,
         ]);
     }
 
