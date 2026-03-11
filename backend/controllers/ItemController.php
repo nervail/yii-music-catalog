@@ -85,40 +85,18 @@ class ItemController extends Controller
         ]);
     }
 
-    public function actionSeed()
+    public function actionCreate()
     {
-        $items = [
-            [
-                'name' => 'Track One',
-                'description' => 'First test track',
-                'image_url' => '/images/test1.jpg',
-                'artist_id' => 1,
-                'genre_id' => 4,
-            ],
-            [
-                'name' => 'Track Two',
-                'description' => 'Second test track',
-                'image_url' => '/images/test2.jpg',
-                'artist_id' => 1,
-                'genre_id' => 4,
-            ],
-            [
-                'name' => 'Track Three',
-                'description' => 'Third test track',
-                'image_url' => '/images/test3.jpg',
-                'artist_id' => 1,
-                'genre_id' => 1,
-            ],
-        ];
+        $model = new Item();
 
-        foreach ($items as $data) {
-            $item = new Item();
-            $item->attributes = $data;
-            $item->save();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Successfully added new track!');
+            return $this->redirect('/item');
         }
 
-        return "done";
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
-
 
 }
