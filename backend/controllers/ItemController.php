@@ -99,4 +99,18 @@ class ItemController extends Controller
         ]);
     }
 
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Successfully updated track!');
+            return $this->redirect('/item');
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
 }

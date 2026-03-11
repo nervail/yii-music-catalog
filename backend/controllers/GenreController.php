@@ -111,7 +111,8 @@ class GenreController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect('index');
+            Yii::$app->session->setFlash('success', 'Successfully updated genre!');
+            return $this->redirect('/genre');
         }
 
         return $this->render('update', [

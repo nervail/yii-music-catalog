@@ -111,7 +111,8 @@ class ArtistController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect('index');
+            Yii::$app->session->setFlash('success', 'Successfully updated artist!');
+            return $this->redirect('/artists');
         }
 
         return $this->render('update', [
