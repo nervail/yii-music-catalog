@@ -123,4 +123,15 @@ class ItemController extends Controller
         ]);
     }
 
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('error', 'Error while trying delete');
+        }
+
+        return $this->redirect('/item');
+    }
+
 }
