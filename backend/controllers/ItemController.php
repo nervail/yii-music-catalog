@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Artist;
 use common\models\Item;
+use common\models\ItemSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
@@ -73,16 +74,12 @@ class ItemController extends Controller
 
     public function actionIndex()
     {
-        $query = Item::find()->where(['status' => 1]);
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 10,
-            ]
-        ]);
+        $searchTrack = new ItemSearch();
+        $dataProvider = $searchTrack->search(Yii::$app->request->queryParams);
+        
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchTrack,
         ]);
     }
 
