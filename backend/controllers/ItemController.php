@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Artist;
 use common\models\Item;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -109,6 +110,15 @@ class ItemController extends Controller
         }
 
         return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('view', [
             'model' => $model,
         ]);
     }

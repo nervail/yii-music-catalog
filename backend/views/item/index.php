@@ -19,13 +19,13 @@ use yii\grid\GridView;
         [
             'attribute' => 'created_at',
             'value' => function ($model) {
-                return Yii::$app->formatter->asDate($model->created_at, 'php:d.m.Y H:i');
+                return Yii::$app->formatter->asDateTime($model->created_at);
             }
         ],
         [
             'attribute' => 'updated_at',
             'value' => function ($model) {
-                return Yii::$app->formatter->asDate($model->updated_at, 'php:d.m.Y H:i');
+                return Yii::$app->formatter->asDateTime($model->updated_at);
             }
         ],
         ['class' => 'yii\grid\ActionColumn'],

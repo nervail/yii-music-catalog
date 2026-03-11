@@ -49,6 +49,13 @@ return [
             'rules' => [
             ],
         ],
+        'formatter' => [
+            'class' => yii\i18n\Formatter::class,
+            'datetimeFormat' => 'php:d.m.Y H:i',
+            'dateFormat' => 'php:d.m.Y',
+            'timeFormat' => 'php:H:i',
+            'locale' => 'ru-RU',
+        ],
     ],
     'params' => $params,
 ];
