@@ -28,5 +28,6 @@ use yii\grid\GridView;
                 return Yii::$app->formatter->asDate($model->updated_at, 'php:d.m.Y H:i');
             }
         ],
+        ['class' => 'yii\grid\ActionColumn'],
     ]
 ]) ?>
