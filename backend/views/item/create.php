@@ -7,12 +7,6 @@ use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;
 
 $this->title = 'Add Track';
-
-$artists = Artist::find()->all();
-$artistList = ArrayHelper::map($artists, 'id', 'name');
-
-$genres = Genre::find()->all();
-$genreList = ArrayHelper::map($genres, 'id', 'name');
 ?>
 <div class="row justify-content-center pt-5">
     <div class="col-lg-6">
@@ -39,15 +33,11 @@ $genreList = ArrayHelper::map($genres, 'id', 'name');
                 </div>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'artist_id')->dropDownList(
-                        $artistList
-                    )->label('Artist')?>
+                    <?= $form->field($model, 'artist_id')->dropDownList(Artist::getList())->label('Artist')?>
                 </div>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'genre_id')->dropDownList(
-                        $genreList
-                    )->label('Genre')?>
+                    <?= $form->field($model, 'genre_id')->dropDownList(Genre::getList())->label('Genre')?>
                 </div>
                 
             </div>
