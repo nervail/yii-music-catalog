@@ -5,7 +5,8 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-
+use common\models\Artist;
+use common\models\Genre;
 class Item extends ActiveRecord
 {
     /**
@@ -33,5 +34,16 @@ class Item extends ActiveRecord
             [['name', 'description'], 'string'],
             [['artist_id', 'genre_id'], 'integer'],
         ];
+    }
+
+    public function getArtist()
+    {
+        return $this->hasOne(Artist::class, ['id' => 'artist_id']);
+    }
+
+
+    public function getGenre()
+    {
+        return $this->hasOne(Genre::class, ['id' => 'genre_id']);
     }
 }
