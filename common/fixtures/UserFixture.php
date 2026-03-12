@@ -6,5 +6,6 @@ use yii\test\ActiveFixture;
 
 class UserFixture extends ActiveFixture
 {
-    public $modelClass = 'common\models\User';
+    public $tableName = '{{%users}}';
+    public $dataFile = __DIR__ . '/data/users.php';
 }
