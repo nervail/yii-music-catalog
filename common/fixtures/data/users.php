@@ -244,4 +244,43 @@ return [
 'updated_at' => $time,
 ],
 
+// 21 - админ
+'admin21' => [
+    'id' => 21,
+    'username' => 'admin',
+    'auth_key' => Yii::$app->security->generateRandomString(),
+    'password_hash' => Yii::$app->security->generatePasswordHash('admin'),
+    'password_reset_token' => null,
+    'email' => 'admin21@test.com',
+    'status' => 10,
+    'created_at' => $time,
+    'updated_at' => $time,
+],
+
+// 22 - модератор
+'moderator22' => [
+    'id' => 22,
+    'username' => 'moderator',
+    'auth_key' => Yii::$app->security->generateRandomString(),
+    'password_hash' => Yii::$app->security->generatePasswordHash('moderator'),
+    'password_reset_token' => null,
+    'email' => 'moderator22@test.com',
+    'status' => 10,
+    'created_at' => $time,
+    'updated_at' => $time,
+],
+
+// 23 - дефолтный пользователь
+'testuser23' => [
+    'id' => 23,
+    'username' => 'test-user',
+    'auth_key' => Yii::$app->security->generateRandomString(),
+    'password_hash' => Yii::$app->security->generatePasswordHash('test-user'),
+    'password_reset_token' => null,
+    'email' => 'test-user@test.com',
+    'status' => 10,
+    'created_at' => $time,
+    'updated_at' => $time,
+],
+
 ];
