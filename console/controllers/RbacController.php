@@ -16,6 +16,9 @@ class RbacController extends Controller
         $auth->removeAll();
 
         // MODERATOR + ADMIN PERMISSIONS
+
+        $indexItem = $auth->createPermission('indexItem');
+        $auth->add($indexItem);
         $viewItem = $auth->createPermission('viewItem');
         $auth->add($viewItem);
         $createItem = $auth->createPermission('createItem');
@@ -25,6 +28,8 @@ class RbacController extends Controller
         $deleteItem = $auth->createPermission('deleteItem');
         $auth->add($deleteItem);
 
+        $indexArtist = $auth->createPermission('indexArtist');
+        $auth->add($indexArtist);
         $viewArtist = $auth->createPermission('viewArtist');
         $auth->add($viewArtist);
         $createArtist = $auth->createPermission('createArtist');
@@ -34,6 +39,8 @@ class RbacController extends Controller
         $deleteArtist = $auth->createPermission('deleteArtist');
         $auth->add($deleteArtist);
 
+        $indexGenre = $auth->createPermission('indexGenre');
+        $auth->add($indexGenre);
         $viewGenre = $auth->createPermission('viewGenre');
         $auth->add($viewGenre);
         $createGenre = $auth->createPermission('createGenre');
@@ -75,16 +82,19 @@ class RbacController extends Controller
         
         $moderator = $auth->createRole('moderator');
         $auth->add($moderator);
+        $auth->addChild($moderator, $indexItem);
         $auth->addChild($moderator, $viewItem);
         $auth->addChild($moderator, $createItem);
         $auth->addChild($moderator, $updateItem);
         $auth->addChild($moderator, $deleteItem);
 
+        $auth->addChild($moderator, $indexArtist);
         $auth->addChild($moderator, $viewArtist);
         $auth->addChild($moderator, $createArtist);
         $auth->addChild($moderator, $updateArtist);
         $auth->addChild($moderator, $deleteArtist);
-
+        
+        $auth->addChild($moderator, $indexGenre);
         $auth->addChild($moderator, $viewGenre);
         $auth->addChild($moderator, $createGenre);
         $auth->addChild($moderator, $updateGenre);
