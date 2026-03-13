@@ -12,6 +12,18 @@ use yii\helpers\Url;
         <div class="info">
           <a href="#" class="d-block"><?= Yii::$app->user->identity->username ?></a>
         </div>
+
+        <?php if (!Yii::$app->user->isGuest): ?>
+            <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post', [
+                'class' => 'mt-2'
+            ]) ?>
+
+            <button class="btn btn-danger btn-sm w-100">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+
+            <?= \yii\helpers\Html::endForm() ?>
+        <?php endif; ?>
       </div>
 
       <!-- SidebarSearch Form -->
