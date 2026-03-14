@@ -1,7 +1,9 @@
 <?php
 use backend\assets\AdminLteAsset;
+use backend\assets\AppAsset;
 
 AdminLteAsset::register($this);
+AppAsset::register($this);
 
 $this->beginPage();
 ?>

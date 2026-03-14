@@ -3,27 +3,54 @@ use Yii;
 use yii\helpers\Url;
 ?>
 
+
+<?php
+$role = Yii::$app->user->identity->role;
+
+$badgeClass = match ($role) {
+    'admin' => 'badge badge-danger',
+    'moderator' => 'badge badge-purple',
+    default => 'badge badge-secondary',
+};
+?>
+
 <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a href="#" class="d-block"><?= Yii::$app->user->identity->username ?></a>
+      <div class="user-panel mt-3 pb-3 mb-3">
+    
+        <div class="d-flex align-items-center">
+            <div class="image">
+                <img src="/dist/img/user2-160x160.jpg"
+                    class="img-circle elevation-2"
+                    alt="User Image">
+            </div>
+
+            <div class="info ml-2">
+                <a class="d-block">
+                    <?= Yii::$app->user->identity->username ?>
+                </a>
+
+                <span class="<?= $badgeClass ?>">
+                    <?= strtoupper($role) ?>
+                </span>
+            </div>
         </div>
 
         <?php if (!Yii::$app->user->isGuest): ?>
+
             <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post', [
                 'class' => 'mt-2'
             ]) ?>
 
-            <button class="btn btn-danger btn-sm w-100">
-                <i class="fas fa-sign-out-alt"></i>
+            <button class="btn btn-danger btn-sm btn-block">
+                <i class="fas fa-sign-out-alt mr-1"></i>
+                Logout
             </button>
 
             <?= \yii\helpers\Html::endForm() ?>
+
         <?php endif; ?>
+
       </div>
 
       <!-- SidebarSearch Form -->

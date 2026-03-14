@@ -57,6 +57,16 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function getAssignment()
+    {
+        return $this->hasOne(AuthAssignment::class, ['user_id' => 'id']);
+    }
+
+    public function getRole()
+    {
+        return $this->assignment->item_name ?? null;
+    }
+
     /**
      * {@inheritdoc}
      */
