@@ -29,15 +29,36 @@ class ArtistController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['error'],
+                        'actions' => ['index'],
+                        'roles' => ['indexArtist'],
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'actions' => ['view'],
+                        'roles' => ['viewArtist'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['createArtist'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['updateArtist'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['deleteArtist'],
                     ],
                 ],
                 'denyCallback' => function ($rule, $action) {
-                    Yii::$app->response->redirect(['/site/login']);
+                    if (Yii::$app->user->isGuest) {
+                        return Yii::$app->response->redirect(['/site/login']);
+                    }
+                    
+                    throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
                 }
             ],
             'verbs' => [

@@ -42,11 +42,16 @@ class SiteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'actions' => ['index'],
+                        'roles' => ['admin', 'moderator'],
                     ],
                 ],
                 'denyCallback' => function ($rule, $action) {
-                    Yii::$app->response->redirect(['/site/login']);
+                    if (Yii::$app->user->isGuest) {
+                        Yii::$app->response->redirect(['/site/login']);
+                    }
+                    
+                    throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
                 }
             ],
             'verbs' => [
@@ -87,20 +92,10 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            if (!Yii::$app->user->can('admin')) {
-                Yii::$app->user->logout();
-                Yii::$app->session->setFlash('error', 'Нет доступа к админке');
-                return $this->redirect('http://music.local');
-            }
-
             return $this->redirect(['site/index']);
         }
 
@@ -120,6 +115,6 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect('/site/login');
     }
 }

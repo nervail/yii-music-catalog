@@ -29,15 +29,36 @@ class GenreController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['error'],
+                        'actions' => ['index'],
+                        'roles' => ['indexGenre'],
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'actions' => ['view'],
+                        'roles' => ['viewGenre'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['createGenre'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['updateGenre'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['deleteGenre'],
                     ],
                 ],
                 'denyCallback' => function ($rule, $action) {
-                    Yii::$app->response->redirect(['/site/login']);
+                    if (Yii::$app->user->isGuest) {
+                        return Yii::$app->response->redirect(['/site/login']);
+                    }
+                    
+                    throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
                 }
             ],
             'verbs' => [
