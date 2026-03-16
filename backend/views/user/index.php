@@ -1,7 +1,6 @@
 <?php
 
 use common\models\User;
-use common\models\UserSearch;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -15,7 +14,7 @@ use yii\helpers\Html;
     <?= Html::activeTextInput($searchModel, 'username', ['class' => 'form-control mr-2', 'placeholder' => 'Name']) ?>
     <?= Html::activeTextInput($searchModel, 'email', ['class' => 'form-control mr-2', 'placeholder' => 'Description']) ?>
     <?= Html::activeTextInput($searchModel, 'status', ['class' => 'form-control mr-2', 'placeholder' => 'Status']) ?>
-    <?= Html::activeDropDownList($searchModel, 'role', UserSearch::getRoleList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose a role']) ?>
+    <?= Html::activeDropDownList($searchModel, 'role', User::getRoleList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose a role']) ?>
     <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
     <?= Html::a('Reset', ['index'], ['class' => 'btn btn-default ml-2']) ?>
 

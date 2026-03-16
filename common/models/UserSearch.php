@@ -2,10 +2,8 @@
 
 namespace common\models;
 
-use Yii;
 use common\models\User;
 use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 
 class UserSearch extends User
 {
@@ -59,10 +57,5 @@ class UserSearch extends User
               ->andFilterWhere(['a.item_name' => $this->role]);
 
         return $dataProvider;
-    }
-
-    public static function getRoleList(): array
-    {
-        return ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
     }
 }

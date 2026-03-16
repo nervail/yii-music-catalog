@@ -6,6 +6,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -74,6 +75,11 @@ class User extends ActiveRecord implements IdentityInterface
             'moderator' => 'badge badge-purple',
             default => 'badge badge-secondary',
         };
+    }
+
+    public static function getRoleList(): array
+    {
+        return ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
     }
 
     /**
