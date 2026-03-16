@@ -12,7 +12,7 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'status'], 'integer'],
             [['username', 'email'], 'string'],
             [['role'], 'safe'],
         ];

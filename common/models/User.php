@@ -37,6 +37,20 @@ class User extends ActiveRecord implements IdentityInterface
         return '{{%users}}';
     }
 
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_DELETED => 'Deleted',
+            self::STATUS_INACTIVE => 'Inactive',
+            self::STATUS_ACTIVE => 'Active',
+        ];
+    }
+
+    public function getStatusName()
+    {
+        return self::getStatusList()[$this->status] ?? 'Unknown';
+    }
+
     /**
      * {@inheritdoc}
      */

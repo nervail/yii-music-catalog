@@ -13,7 +13,7 @@ use yii\helpers\Html;
     <?= Html::activeTextInput($searchModel, 'id', ['class' => 'form-control mr-2', 'placeholder' => 'ID']) ?>
     <?= Html::activeTextInput($searchModel, 'username', ['class' => 'form-control mr-2', 'placeholder' => 'Name']) ?>
     <?= Html::activeTextInput($searchModel, 'email', ['class' => 'form-control mr-2', 'placeholder' => 'Description']) ?>
-    <?= Html::activeTextInput($searchModel, 'status', ['class' => 'form-control mr-2', 'placeholder' => 'Status']) ?>
+    <?= Html::activeDropDownList($searchModel, 'status', User::getStatusList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose a status']) ?>
     <?= Html::activeDropDownList($searchModel, 'role', User::getRoleList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose a role']) ?>
     <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
     <?= Html::a('Reset', ['index'], ['class' => 'btn btn-default ml-2']) ?>
@@ -26,7 +26,12 @@ use yii\helpers\Html;
         'id',
         'username',
         'email',
-        'status',
+        [
+            'attribute' => 'status',
+            'value' => function($model) {
+                return $model->getStatusName();
+            }
+        ],
         [
             'attribute' => 'role',
             'format' => 'raw',
