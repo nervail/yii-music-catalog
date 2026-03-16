@@ -67,6 +67,15 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->assignment->item_name ?? null;
     }
 
+    public static function getRoleBadgeClass($role): string // Эта функция возвращает класс badge для роли 
+    {
+        return match ($role) {
+            'admin' => 'badge badge-danger',
+            'moderator' => 'badge badge-purple',
+            default => 'badge badge-secondary',
+        };
+    }
+
     /**
      * {@inheritdoc}
      */

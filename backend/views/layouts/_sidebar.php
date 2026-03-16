@@ -1,11 +1,10 @@
 <?php 
-use Yii;
 use yii\helpers\Url;
 ?>
 
 
 <?php
-$role = Yii::$app->user->identity->role;
+$role = \Yii::$app->user->identity->role;
 
 $badgeClass = match ($role) {
     'admin' => 'badge badge-danger',
@@ -27,7 +26,7 @@ $badgeClass = match ($role) {
 
             <div class="info ml-2">
                 <a class="d-block">
-                    <?= Yii::$app->user->identity->username ?>
+                    <?= \Yii::$app->user->identity->username ?>
                 </a>
 
                 <span class="<?= $badgeClass ?>">
@@ -36,7 +35,7 @@ $badgeClass = match ($role) {
             </div>
         </div>
 
-        <?php if (!Yii::$app->user->isGuest): ?>
+        <?php if (!\Yii::$app->user->isGuest): ?>
 
             <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post', [
                 'class' => 'mt-2'

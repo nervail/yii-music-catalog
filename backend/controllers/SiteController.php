@@ -48,7 +48,7 @@ class SiteController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
-                        Yii::$app->response->redirect(['/site/login']);
+                        return Yii::$app->response->redirect(['/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
