@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+use common\models\User;
 use yii\helpers\Url;
 ?>
 
@@ -6,11 +8,7 @@ use yii\helpers\Url;
 <?php
 $role = \Yii::$app->user->identity->role;
 
-$badgeClass = match ($role) {
-    'admin' => 'badge badge-danger',
-    'moderator' => 'badge badge-purple',
-    default => 'badge badge-secondary',
-};
+$badgeClass = User::getRoleBadgeClass($role);
 ?>
 
 <div class="sidebar">

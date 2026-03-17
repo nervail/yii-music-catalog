@@ -29,7 +29,7 @@ class UserController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index', 'view'],
                         'roles' => ['viewUsers'],
                     ],
                     // [
@@ -70,6 +70,15 @@ class UserController extends Controller
         ];
     }
 
+    protected function findUser(int $id): User
+    {
+        if (($user = User::findOne($id)) !== null) {
+            return $user;
+        }
+
+        throw new NotFoundHttpException();
+    }
+
     public function actionIndex()
     {
         $searchUser = new UserSearch();
@@ -78,6 +87,13 @@ class UserController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchUser,
+        ]);
+    }
+
+    public function actionView(int $id)
+    {
+        return $this->render('view', [
+            'model' => $this::findUser($id),
         ]);
     }
 }

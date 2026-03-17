@@ -46,6 +46,16 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public static function getStatusBadgeClass($status)
+    {
+        return match ($status) {
+            self::STATUS_DELETED => 'badge bg-secondary',
+            self::STATUS_INACTIVE => 'badge bg-warning',
+            self::STATUS_ACTIVE => 'badge bg-success',
+            default => 'badge bg-danger'
+        };
+    }
+
     public function getStatusName()
     {
         return self::getStatusList()[$this->status] ?? 'Unknown';
