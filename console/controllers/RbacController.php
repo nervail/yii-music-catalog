@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\rbac\UpdateUserRule;
 use Yii;
 use yii\console\Controller;
 
@@ -52,12 +53,20 @@ class RbacController extends Controller
         // END MODERATOR + ADMIN PERMISSIONS
 
         // ADMIN (ONLY) PERMISSIONS
+        $updateUserRule = new UpdateUserRule();
+        $auth->add($updateUserRule);
+
         $banUser = $auth->createPermission('banUser');
         $auth->add($banUser);
         $unbanUser = $auth->createPermission('unbanUser');
         $auth->add($unbanUser);
         $archiveUser = $auth->createPermission('archiveUser');
         $auth->add($archiveUser);
+
+        $updateUser = $auth->createPermission('updateUser');
+        $updateUser->ruleName = $updateUserRule->name;
+        $auth->add($updateUser);
+        
         $assignRole = $auth->createPermission('assignRole');
         $auth->add($assignRole);
         $viewUsers = $auth->createPermission('viewUsers');
@@ -78,6 +87,7 @@ class RbacController extends Controller
         $auth->addChild($admin, $assignRole);
         $auth->addChild($admin, $viewUsers);
         $auth->addChild($admin, $viewLogs);
+        $auth->addChild($admin, $updateUser);
 
         
         $moderator = $auth->createRole('moderator');

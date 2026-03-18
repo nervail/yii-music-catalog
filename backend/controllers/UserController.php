@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\UpdateUserForm;
 use common\models\User;
 use common\models\UserSearch;
 use Yii;
@@ -15,6 +16,7 @@ use yii\web\NotFoundHttpException;
  */
 class UserController extends Controller
 {
+    private $_models = [];
 
     public $layout = 'admin';
 
@@ -32,21 +34,16 @@ class UserController extends Controller
                         'actions' => ['index', 'view'],
                         'roles' => ['viewUsers'],
                     ],
-                    // [
-                    //     'allow' => true,
-                    //     'actions' => ['view'],
-                    //     'roles' => ['viewArtist'],
-                    // ],
-                    // [
-                    //     'allow' => true,
-                    //     'actions' => ['create'],
-                    //     'roles' => ['createArtist'],
-                    // ],
-                    // [
-                    //     'allow' => true,
-                    //     'actions' => ['update'],
-                    //     'roles' => ['updateArtist'],
-                    // ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['updateUser'],
+                        'roleParams' => function ($rule) {
+                            return [
+                                'model' => $this->findModel(Yii::$app->request->get('id'))
+                            ];
+                        },
+                    ],
                     // [
                     //     'allow' => true,
                     //     'actions' => ['delete'],
@@ -70,13 +67,17 @@ class UserController extends Controller
         ];
     }
 
-    protected function findUser(int $id): User
+    protected function findModel(int $id): User
     {
-        if (($user = User::findOne($id)) !== null) {
-            return $user;
+        if (!isset($this->_models[$id])) {
+            $model = User::findOne($id);
+            if ($model === null) {
+                throw new NotFoundHttpException();
+            }
+            $this->_models[$id] = $model;
         }
 
-        throw new NotFoundHttpException();
+        return $this->_models[$id];
     }
 
     public function actionIndex()
@@ -93,7 +94,22 @@ class UserController extends Controller
     public function actionView(int $id)
     {
         return $this->render('view', [
-            'model' => $this::findUser($id),
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    public function actionUpdate(int $id)
+    {
+        $user = $this->findModel($id);
+        $model = new UpdateUserForm($user);
+
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'User updated');
+            return $this->redirect(['view', 'id' => $user->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
         ]);
     }
 }
