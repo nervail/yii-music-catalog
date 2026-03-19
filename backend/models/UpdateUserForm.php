@@ -38,7 +38,24 @@ class UpdateUserForm extends Model
             ['email', 'email'],
             ['status', 'integer'],
             ['role', 'in', 'range' => array_keys(Yii::$app->authManager->getRoles())],
+            [['username', 'email', 'status', 'role'], 'validateCanUpdate']
         ];
+    }
+
+    public function validateCanUpdate($attribute, $params, $validator, $current)
+    {
+        $currentUser = \Yii::$app->user;
+        $targetUser = $this->_user;
+
+        if ($targetUser->id == $currentUser->id) {
+            $this->addError($attribute, 'Вы не можете редактировать свои данные через этот раздел.');
+            return;
+        }
+
+        if ($targetUser->isAdmin()) {
+            $this->addError($attribute, 'Редактирование администраторов ограничено.');
+            return;
+        }
     }
 
     public function save(): bool
@@ -61,10 +78,10 @@ class UpdateUserForm extends Model
             }
             
             $auth = Yii::$app->authManager;
-            $auth->revokeAll($user->id); // Удаляются все роли
             $role = $auth->getRole($this->role);
 
             if ($role) {
+                $auth->revokeAll($user->id); // Удаляются все роли
                 $auth->assign($role, $user->id);
             }
 
