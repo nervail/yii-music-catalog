@@ -64,34 +64,6 @@ class UpdateUserForm extends Model
             return false;
         }
 
-        $transaction = \Yii::$app->db->beginTransaction();
-
-        try {
-            $user = $this->_user;
-            $user->username = $this->username;
-            $user->email = $this->email;
-            $user->status = $this->status;
-
-            if (!$user->save(false)) {
-                $transaction->rollBack();
-                return false;
-            }
-            
-            $auth = Yii::$app->authManager;
-            $role = $auth->getRole($this->role);
-
-            if ($role) {
-                $auth->revokeAll($user->id); // Удаляются все роли
-                $auth->assign($role, $user->id);
-            }
-
-            $transaction->commit();
-            return true;
-            
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            \Yii::error("Ошибка при обновлении пользователя: " . $e->getMessage());
-            return false;
-        }
+        return User::updateWithRole($this->_user, $this->getAttributes(['username', 'email', 'status']), $this->role);
     }
 }

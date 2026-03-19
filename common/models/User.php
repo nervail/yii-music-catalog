@@ -82,6 +82,42 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public static function updateWithRole(User $user, array $attributes, string $role)
+    {
+        $user->username = $attributes['username'];
+        $user->email = $attributes['email'];
+        $user->status = $attributes['status'];
+
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            if (!$user->save()) {
+                $transaction->rollBack();
+                return false;
+            }
+
+            $auth = Yii::$app->authManager;
+            $roleObject = $auth->getRole($role);
+
+            if (!$roleObject) {
+                Yii::error("Роль {$role} не найдена в системе.");
+                $transaction->rollBack();
+                return false;
+            }
+
+            $auth->revokeAll($user->id);
+            $auth->assign($roleObject, $user->id);
+
+            $transaction->commit();
+            return true;
+
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::error("Ошибка обновления пользователя {$user->id}: " . $e->getMessage());
+            return false;
+        }
+    } 
+
     public function isAdmin()
     {
         return \Yii::$app->authManager->getAssignment('admin', $this->id) !== null;
