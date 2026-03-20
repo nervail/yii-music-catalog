@@ -52,6 +52,10 @@ class UpdateUserForm extends Model
             return;
         }
 
+        if ($currentUser->can('superAdmin')) { // Супер админу проверки не нужны кроме редактирования себя
+            return;
+        }
+
         if ($targetUser->isAdmin()) {
             $this->addError($attribute, 'Редактирование администраторов ограничено.');
             return;

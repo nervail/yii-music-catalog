@@ -123,6 +123,11 @@ class User extends ActiveRecord implements IdentityInterface
         return \Yii::$app->authManager->getAssignment('admin', $this->id) !== null;
     }
 
+    public function isSuperAdmin()
+    {
+        return \Yii::$app->authManager->getAssignment('superAdmin', $this->id) !== null;
+    }
+
     public function getAssignment()
     {
         return $this->hasOne(AuthAssignment::class, ['user_id' => 'id']);

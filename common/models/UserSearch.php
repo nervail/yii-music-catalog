@@ -24,6 +24,16 @@ class UserSearch extends User
 
         $query->joinWith('assignment a');
 
+        if (!\Yii::$app->user->can('superAdmin')) {
+            $query->andWhere([
+                'or', 
+                ['not in', 'a.item_name', ['admin', 'superAdmin']],
+                ['a.item_name' => NULL]
+            ]);
+        }
+
+        $query->andWhere(['not', ['id' => \Yii::$app->user->id]]); // Чтобы не видеть себя
+
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
                 'pageSize' => 10

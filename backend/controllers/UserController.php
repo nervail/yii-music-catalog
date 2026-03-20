@@ -9,6 +9,7 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -73,6 +74,16 @@ class UserController extends Controller
             $model = User::findOne($id);
             if ($model === null) {
                 throw new NotFoundHttpException();
+            }
+
+            if (!\Yii::$app->user->can('superAdmin')) {
+                if (
+                    $model->isSuperAdmin() ||
+                    $model->isAdmin() ||
+                    $model->id == \Yii::$app->user->id
+                    ) {
+                        throw new ForbiddenHttpException('Доступ запрещен');
+                    }
             }
             $this->_models[$id] = $model;
         }
