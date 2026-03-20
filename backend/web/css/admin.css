@@ -2,3 +2,10 @@
     background-color: #6f42c1;
     color: #fff;
 }
+
+.badge-superadmin {
+    background-color: #ffc107;
+    color: #1f2d3d;
+    font-weight: bold;
+    border: 1px solid #edb100;
+}

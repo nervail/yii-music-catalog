@@ -71,6 +71,8 @@ class RbacController extends Controller
         $user = $auth->createRole('user');
         $auth->add($user);
 
+        $superAdmin = $auth->createRole('superAdmin');
+        $auth->add($superAdmin);
 
         $admin = $auth->createRole('admin');
         $auth->add($admin);
@@ -106,12 +108,15 @@ class RbacController extends Controller
 
         $auth->addChild($moderator, $user);
         $auth->addChild($admin, $moderator);
+        $auth->addChild($superAdmin, $admin);
 
         if (YII_ENV_DEV) {
+            $superAdminUser = 20;
             $adminUser = 21;
             $moderatorUser = 22;
             $test_userUser = 23;
 
+            $auth->assign($superAdmin, $superAdminUser);
             $auth->assign($admin, $adminUser);
             $auth->assign($moderator, $moderatorUser);
             $auth->assign($user, $test_userUser);

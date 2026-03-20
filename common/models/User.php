@@ -135,7 +135,10 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function getRoleBadgeClass($role): string // Эта функция возвращает класс badge для роли 
     {
+        $role = strtolower($role);
+
         return match ($role) {
+            'superadmin' => 'badge badge-superadmin',
             'admin' => 'badge badge-danger',
             'moderator' => 'badge badge-purple',
             default => 'badge badge-secondary',

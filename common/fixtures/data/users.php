@@ -232,13 +232,13 @@ return [
 'updated_at' => $time,
 ],
 
-'user20' => [
+'super-admin20' => [
 'id' => 20,
-'username' => 'user20',
-'auth_key' => 'key20',
-'password_hash' => '$2y$13$abcdefghijklmnopqrstuv',
+'username' => 'superAdmin',
+'auth_key' => Yii::$app->security->generateRandomString(),
+'password_hash' => Yii::$app->security->generatePasswordHash('superAdmin'),
 'password_reset_token' => null,
-'email' => 'user20@test.com',
+'email' => 'superAdmin20@test.com',
 'status' => 10,
 'created_at' => $time,
 'updated_at' => $time,
