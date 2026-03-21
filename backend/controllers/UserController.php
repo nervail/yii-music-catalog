@@ -40,11 +40,11 @@ class UserController extends Controller
                         'actions' => ['update'],
                         'roles' => ['updateUser'],
                     ],
-                    // [
-                    //     'allow' => true,
-                    //     'actions' => ['delete'],
-                    //     'roles' => ['deleteArtist'],
-                    // ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['archiveUser'],
+                    ],
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
@@ -117,5 +117,18 @@ class UserController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+    }
+
+    public function actionDelete(int $id)
+    {
+        $user = $this->findModel($id);
+        
+        if ($user->archive()) {
+            Yii::$app->session->setFlash('success', 'User deleted');   
+        } else {
+            Yii::$app->session->setFlash('error', 'Error while deleting user');   
+        }
+
+        return $this->redirect('/user');
     }
 }

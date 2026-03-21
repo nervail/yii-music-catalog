@@ -150,6 +150,16 @@ class User extends ActiveRecord implements IdentityInterface
         };
     }
 
+    public function archive(): bool
+    {
+        if ($this->status == self::STATUS_DELETED) {
+            return true;
+        }
+
+        $this->status = self::STATUS_DELETED;
+        return $this->save(false);
+    }
+
     public static function getRoleList(): array
     {
         return ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
