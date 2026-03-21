@@ -39,11 +39,6 @@ class UserController extends Controller
                         'allow' => true,
                         'actions' => ['update'],
                         'roles' => ['updateUser'],
-                        'roleParams' => function ($rule) {
-                            return [
-                                'model' => $this->findModel(Yii::$app->request->get('id'))
-                            ];
-                        },
                     ],
                     // [
                     //     'allow' => true,
