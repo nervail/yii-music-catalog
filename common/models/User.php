@@ -27,6 +27,7 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     public const STATUS_DELETED = 0;
+    public const STATUS_BANNED = 5;
     public const STATUS_INACTIVE = 9;
     public const STATUS_ACTIVE = 10;
     /**
@@ -41,6 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             self::STATUS_DELETED => 'Deleted',
+            self::STATUS_BANNED => 'Banned',
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_ACTIVE => 'Active',
         ];
@@ -50,6 +52,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return match ($status) {
             self::STATUS_DELETED => 'badge bg-secondary',
+            self::STATUS_BANNED   => 'badge bg-dark',
             self::STATUS_INACTIVE => 'badge bg-warning',
             self::STATUS_ACTIVE => 'badge bg-success',
             default => 'badge bg-danger'
@@ -78,7 +81,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED, self::STATUS_BANNED]],
         ];
     }
 
@@ -116,7 +119,31 @@ class User extends ActiveRecord implements IdentityInterface
             Yii::error("Ошибка обновления пользователя {$user->id}: " . $e->getMessage());
             return false;
         }
-    } 
+    }
+
+    public function ban(): bool
+    {
+        if ($this->status == self::STATUS_BANNED) {
+            return true;
+        }
+
+        $this->status = self::STATUS_BANNED;
+        return $this->save();
+    }
+
+    public function restore(): bool
+    {
+        if ($this->status == self::STATUS_INACTIVE) {
+            return false;
+        }
+
+        if ($this->status == self::STATUS_ACTIVE) {
+            return true;
+        }
+
+        $this->status = self::STATUS_ACTIVE;
+        return $this->save();
+    }
 
     public function isAdmin()
     {
@@ -157,7 +184,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         $this->status = self::STATUS_DELETED;
-        return $this->save(false);
+        return $this->save();
     }
 
     public static function getRoleList(): array

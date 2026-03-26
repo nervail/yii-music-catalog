@@ -45,6 +45,16 @@ class UserController extends Controller
                         'actions' => ['delete'],
                         'roles' => ['archiveUser'],
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['ban'],
+                        'roles' => ['banUser'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['restore'],
+                        'roles' => ['restoreUser'],
+                    ],
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
@@ -58,6 +68,8 @@ class UserController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
+                    'ban' => ['post'],
+                    'restore' => ['post'],
                 ],
             ],
         ];
@@ -130,5 +142,33 @@ class UserController extends Controller
         }
 
         return $this->redirect('/user');
+    }
+
+    public function actionBan(int $id)
+    {
+        $user = $this->findModel($id);
+
+        if ($user->ban()) {
+            Yii::$app->session->setFlash('success', 'User banned');   
+        } else {
+            Yii::$app->session->setFlash('error', 'Error while banning user');
+        }
+
+        return $this->redirect('/user');
+
+    }
+
+    public function actionRestore(int $id)
+    {
+        $user = $this->findModel($id);
+
+        if ($user->restore()) {
+            Yii::$app->session->setFlash('success', 'User restored');   
+        } else {
+            Yii::$app->session->setFlash('error', 'Error while restored user');
+        }
+
+        return $this->redirect('/user');
+
     }
 }

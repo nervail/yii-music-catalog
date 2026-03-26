@@ -54,8 +54,8 @@ class RbacController extends Controller
         // ADMIN (ONLY) PERMISSIONS
         $banUser = $auth->createPermission('banUser');
         $auth->add($banUser);
-        $unbanUser = $auth->createPermission('unbanUser');
-        $auth->add($unbanUser);
+        $restoreUser = $auth->createPermission('restoreUser');
+        $auth->add($restoreUser);
         $archiveUser = $auth->createPermission('archiveUser');
         $auth->add($archiveUser);
         $updateUser = $auth->createPermission('updateUser');
@@ -77,7 +77,7 @@ class RbacController extends Controller
         $admin = $auth->createRole('admin');
         $auth->add($admin);
         $auth->addChild($admin, $banUser);
-        $auth->addChild($admin, $unbanUser);
+        $auth->addChild($admin, $restoreUser);
         $auth->addChild($admin, $archiveUser);
         $auth->addChild($admin, $assignRole);
         $auth->addChild($admin, $viewUsers);
