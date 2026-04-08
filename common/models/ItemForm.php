@@ -90,10 +90,11 @@ class ItemForm extends Model
             $item->genre_id = $this->genre_id;
 
             if (!$item->save()) {
-                throw new \Exception(json_encode($item->errors));
+                $firstError = current($item->getFirstErrors());
+                throw new \Exception($firstError ?: 'Ошибка сохранения в БД');
             }
 
-            if ($uploadedKey && $oldImageKey) {
+            if ($uploadedKey && $oldImageKey && $uploadedKey !== $oldImageKey) {
                 $this->storage->delete($oldImageKey);
             }
 

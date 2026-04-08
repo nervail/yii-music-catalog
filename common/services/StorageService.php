@@ -19,7 +19,8 @@ class StorageService
 
     public function uploadFile(string $tempPath, string $extension, string $contentType): string
     {
-        $key = 'tracks/' . uniqid() . '.' . $extension;
+        $randomName = \Yii::$app->security->generateRandomString(32);
+        $key = 'tracks/' . $randomName . '.' . $extension;
 
         $this->s3->putObject([
             'Bucket' => $this->bucket,
