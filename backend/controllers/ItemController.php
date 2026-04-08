@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Artist;
 use common\models\Item;
+use common\models\ItemForm;
 use common\models\ItemSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -11,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * Site controller
@@ -106,11 +108,16 @@ class ItemController extends Controller
 
     public function actionCreate()
     {
-        $model = new Item();
+        $model = new ItemForm();
+        $model->scenario = 'create';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Successfully added new track!');
-            return $this->redirect('/item');
+        if ($model->load(Yii::$app->request->post())) {
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Track created');
+                return $this->redirect('/item');
+            }
         }
 
         return $this->render('create', [
@@ -120,11 +127,19 @@ class ItemController extends Controller
 
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $item = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Successfully updated track!');
-            return $this->redirect('/item');
+        $model = new ItemForm();
+        $model->scenario = 'update';
+        $model->setFromModel($item);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Track updated');
+                return $this->redirect('/item');
+            }
         }
 
         return $this->render('update', [

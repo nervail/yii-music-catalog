@@ -4,7 +4,6 @@ use common\models\Artist;
 use common\models\Genre;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use yii\helpers\ArrayHelper;
 
 $this->title = 'Update Track';
 ?>
@@ -16,7 +15,10 @@ $this->title = 'Update Track';
             </div>
 
             <?php $form = ActiveForm::begin([
-                'id' => 'item-form'
+                'id' => 'item-form',
+                'options' => [
+                    'enctype' => 'multipart/form-data',
+                ],
             ]); ?>
 
             <div class="card-body">
@@ -29,7 +31,17 @@ $this->title = 'Update Track';
                 </div>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'image_url')->textInput(['placeholder' => 'Image_url']) // Пока что картинки текстом в бд добавляются ?> 
+                    <?php if ($model->currentImage): ?>
+                        <div class="mb-2">
+                            <p>Current Image:</p>
+                            <?= Html::img($model->currentImage, [
+                                'class' => 'img-thumbnail', 
+                                'style' => 'width: 200px;'
+                            ]) ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?= $form->field($model, 'image')->fileInput(['placeholder' => 'Image_url'])?> 
                 </div>
 
                 <div class="form-group">
