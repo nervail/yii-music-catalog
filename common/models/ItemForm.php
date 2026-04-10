@@ -52,11 +52,7 @@ class ItemForm extends Model
     {
         $this->_item = $item;
 
-        $this->id = $item->id;
-        $this->name = $item->name;
-        $this->description = $item->description;
-        $this->artist_id = $item->artist_id;
-        $this->genre_id = $item->genre_id;
+        $this->setAttributes($item->getAttributes());
         $this->currentImage = $item->image_url;
     }
 
