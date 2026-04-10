@@ -35,7 +35,12 @@ class ItemForm extends Model
             [['artist_id', 'genre_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['description'], 'string'],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['image'], 'file', 
+                'skipOnEmpty' => true, 
+                'extensions' => 'png, jpg, jpeg',
+                'mimeTypes' => 'image/jpeg, image/png',
+                'maxSize' => 5*1024*1024
+            ],
             [['image'], 'required', 'on' => self::SCENARIO_CREATE],
         ];
     }
