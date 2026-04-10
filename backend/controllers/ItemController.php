@@ -109,7 +109,7 @@ class ItemController extends Controller
     public function actionCreate()
     {
         $model = new ItemForm();
-        $model->scenario = 'create';
+        $model->scenario = ItemForm::SCENARIO_CREATE;
 
         if ($model->load(Yii::$app->request->post())) {
             $model->image = UploadedFile::getInstance($model, 'image');
@@ -130,7 +130,7 @@ class ItemController extends Controller
         $item = $this->findModel($id);
 
         $model = new ItemForm();
-        $model->scenario = 'update';
+        $model->scenario = ItemForm::SCENARIO_UPDATE;
         $model->setFromModel($item);
 
         if ($model->load(Yii::$app->request->post())) {

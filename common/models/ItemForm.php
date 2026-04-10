@@ -8,6 +8,9 @@ use yii\web\NotFoundHttpException;
 
 class ItemForm extends Model
 {
+    public const SCENARIO_CREATE = 'create';
+    public const SCENARIO_UPDATE = 'update';
+
     public $id;
     public $name;
     public $description;
@@ -33,15 +36,15 @@ class ItemForm extends Model
             [['name'], 'string', 'max' => 255],
             [['description'], 'string'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
-            [['image'], 'required', 'on' => 'create'],
+            [['image'], 'required', 'on' => self::SCENARIO_CREATE],
         ];
     }
 
     public function scenarios()
     {
         return [
-            'create' => ['name', 'description', 'artist_id', 'genre_id', 'image'],
-            'update' => ['name', 'description', 'artist_id', 'genre_id', 'image'],
+            self::SCENARIO_CREATE => ['name', 'description', 'artist_id', 'genre_id', 'image'],
+            self::SCENARIO_UPDATE => ['name', 'description', 'artist_id', 'genre_id', 'image'],
         ];
     }
 
@@ -59,7 +62,7 @@ class ItemForm extends Model
 
     public function save(): bool
     {
-        if ($this->scenario === 'update' && !$this->_item) {
+        if ($this->scenario === self::SCENARIO_UPDATE && !$this->_item) {
             throw new \yii\base\InvalidCallException('Для сценария update необходимо вызвать setFromModel()');
         }
 
