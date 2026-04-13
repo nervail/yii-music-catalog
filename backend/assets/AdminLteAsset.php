@@ -14,7 +14,6 @@ class AdminLteAsset extends AssetBundle
     ];
 
     public $js = [
-        'plugins/jquery/jquery.min.js',
         'plugins/bootstrap/js/bootstrap.bundle.min.js',
         'dist/js/adminlte.min.js',
     ];

@@ -163,6 +163,7 @@ class ItemController extends Controller
         if (!$model->delete()) {
             Yii::$app->session->setFlash('error', 'Error while trying delete');
         }
+        Yii::$app->session->setFlash('success', 'Track deleted');
 
         return $this->redirect('/item');
     }

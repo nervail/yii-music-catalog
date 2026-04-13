@@ -1,6 +1,7 @@
 <?php
 use backend\assets\AdminLteAsset;
 use backend\assets\AppAsset;
+use backend\widgets\ToastAlert;
 
 AdminLteAsset::register($this);
 AppAsset::register($this);
@@ -177,6 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <div class="content pt-4 pl-4">
+      <?= ToastAlert::widget() ?>
       <?= $content ?>
     </div>
   </div>
