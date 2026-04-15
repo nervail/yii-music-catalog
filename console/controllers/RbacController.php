@@ -15,115 +15,78 @@ class RbacController extends Controller
         $auth = Yii::$app->authManager;
         $auth->removeAll();
 
-        // MODERATOR + ADMIN PERMISSIONS
+        // Создание ролей модератора
+        $entities = ['Item', 'Artist', 'Genre'];
+        $actions = ['index', 'view', 'create', 'update', 'delete'];
 
-        $indexItem = $auth->createPermission('indexItem');
-        $auth->add($indexItem);
-        $viewItem = $auth->createPermission('viewItem');
-        $auth->add($viewItem);
-        $createItem = $auth->createPermission('createItem');
-        $auth->add($createItem);
-        $updateItem = $auth->createPermission('updateItem');
-        $auth->add($updateItem);
-        $deleteItem = $auth->createPermission('deleteItem');
-        $auth->add($deleteItem);
+        $moderatorPermissions = [];
 
-        $indexArtist = $auth->createPermission('indexArtist');
-        $auth->add($indexArtist);
-        $viewArtist = $auth->createPermission('viewArtist');
-        $auth->add($viewArtist);
-        $createArtist = $auth->createPermission('createArtist');
-        $auth->add($createArtist);
-        $updateArtist = $auth->createPermission('updateArtist');
-        $auth->add($updateArtist);
-        $deleteArtist = $auth->createPermission('deleteArtist');
-        $auth->add($deleteArtist);
+        foreach ($entities as $entity) {
+            foreach ($actions as $action) {
+                $name = $action . $entity;
+                $permission = $auth->createPermission($name);
+                $auth->add($permission);
+                $moderatorPermissions[] = $permission;
+            }
+        }
 
-        $indexGenre = $auth->createPermission('indexGenre');
-        $auth->add($indexGenre);
-        $viewGenre = $auth->createPermission('viewGenre');
-        $auth->add($viewGenre);
-        $createGenre = $auth->createPermission('createGenre');
-        $auth->add($createGenre);
-        $updateGenre = $auth->createPermission('updateGenre');
-        $auth->add($updateGenre);
-        $deleteGenre = $auth->createPermission('deleteGenre');
-        $auth->add($deleteGenre);
-        // END MODERATOR + ADMIN PERMISSIONS
+        // Создание ролей админа
+        $adminActionNames = [
+            'banUser', 'restoreUser', 'archiveUser', 'updateUser', 'viewUsers', 'viewLogs'
+        ];
 
-        // ADMIN (ONLY) PERMISSIONS
-        $banUser = $auth->createPermission('banUser');
-        $auth->add($banUser);
-        $restoreUser = $auth->createPermission('restoreUser');
-        $auth->add($restoreUser);
-        $archiveUser = $auth->createPermission('archiveUser');
-        $auth->add($archiveUser);
-        $updateUser = $auth->createPermission('updateUser');
-        $auth->add($updateUser);
-        $assignRole = $auth->createPermission('assignRole');
-        $auth->add($assignRole);
-        $viewUsers = $auth->createPermission('viewUsers');
-        $auth->add($viewUsers);
-        $viewLogs = $auth->createPermission('viewLogs');
-        $auth->add($viewLogs);
-        // END ADMIN (ONLY) PERMISSIONS
+        $adminPermissions = [];
 
-        $user = $auth->createRole('user');
-        $auth->add($user);
+        foreach ($adminActionNames as $name) {
+            $permission = $auth->createPermission($name);
+            $auth->add($permission);
+            $adminPermissions[] = $permission;
+        }
 
+        // Роли
         $superAdmin = $auth->createRole('superAdmin');
         $auth->add($superAdmin);
 
         $admin = $auth->createRole('admin');
         $auth->add($admin);
-        $auth->addChild($admin, $banUser);
-        $auth->addChild($admin, $restoreUser);
-        $auth->addChild($admin, $archiveUser);
-        $auth->addChild($admin, $assignRole);
-        $auth->addChild($admin, $viewUsers);
-        $auth->addChild($admin, $viewLogs);
-        $auth->addChild($admin, $updateUser);
 
-        
         $moderator = $auth->createRole('moderator');
         $auth->add($moderator);
-        $auth->addChild($moderator, $indexItem);
-        $auth->addChild($moderator, $viewItem);
-        $auth->addChild($moderator, $createItem);
-        $auth->addChild($moderator, $updateItem);
-        $auth->addChild($moderator, $deleteItem);
+   
+        $user = $auth->createRole('user');
+        $auth->add($user);
 
-        $auth->addChild($moderator, $indexArtist);
-        $auth->addChild($moderator, $viewArtist);
-        $auth->addChild($moderator, $createArtist);
-        $auth->addChild($moderator, $updateArtist);
-        $auth->addChild($moderator, $deleteArtist);
-        
-        $auth->addChild($moderator, $indexGenre);
-        $auth->addChild($moderator, $viewGenre);
-        $auth->addChild($moderator, $createGenre);
-        $auth->addChild($moderator, $updateGenre);
-        $auth->addChild($moderator, $deleteGenre);
+        // Назначение разрешений для ролей
+        foreach ($moderatorPermissions as $perm) {
+            $auth->addChild($moderator, $perm);
+        }
 
+        foreach ($adminPermissions as $perm) {
+            $auth->addChild($admin, $perm);
+        }
 
-        $auth->addChild($moderator, $user);
-        $auth->addChild($admin, $moderator);
+        // Иерархия ролей
         $auth->addChild($superAdmin, $admin);
+        $auth->addChild($admin, $moderator);
+        $auth->addChild($moderator, $user);
 
         if (YII_ENV_DEV) {
-            $superAdminUser = 20;
-            $adminUser = 21;
-            $moderatorUser = 22;
-            $test_userUser = 23;
+            $assignments = [
+                'superAdmin' => 20,
+                'admin'      => 21,
+                'moderator'  => 22,
+                'user'       => 23,
+            ];
 
-            $auth->assign($superAdmin, $superAdminUser);
-            $auth->assign($admin, $adminUser);
-            $auth->assign($moderator, $moderatorUser);
-            $auth->assign($user, $test_userUser);
-            echo "Roles created: admin, moderator, user\n";
-            echo "Admin id=21, Moderator id=22, test_user id=23\n";
-        } else {
-            echo "Roles created: admin, user, moderator\n";
+            foreach ($assignments as $roleName => $userId) {
+                $role = $auth->getRole($roleName);
+                if ($role) {
+                    $auth->assign($role, $userId);
+                }
+            }
+            
+            echo "RBAC initialized successfully (DEV mode).\n";
+            echo "Assignments: SuperAdmin(20), Admin(21), Moderator(22), User(23)\n";
         }
     }
 }

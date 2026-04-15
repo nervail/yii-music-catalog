@@ -113,7 +113,7 @@ class ArtistController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully added new artist!');
-            return $this->redirect('/artists');
+            return $this->redirect('/artist');
         }
         return $this->render('create', [
             'model' => $model,
@@ -133,7 +133,7 @@ class ArtistController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully updated artist!');
-            return $this->redirect('/artists');
+            return $this->redirect('/artist');
         }
 
         return $this->render('update', [
