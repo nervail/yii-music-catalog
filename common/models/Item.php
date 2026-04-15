@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use common\models\Artist;
 use common\models\Genre;
+
 class Item extends ActiveRecord
 {
     /**
@@ -45,5 +46,10 @@ class Item extends ActiveRecord
     public function getGenre()
     {
         return $this->hasOne(Genre::class, ['id' => 'genre_id']);
+    }
+
+    public function getImageLink()
+    {
+        return Yii::$app->storage->getUrl($this->image_url);
     }
 }

@@ -20,14 +20,6 @@ class ItemForm extends Model
     public $currentImage;
     private ?Item $_item = null;
 
-    private StorageService $storage;
-
-    public function __construct($config = [])
-    {
-        $this->storage = new StorageService();
-        parent::__construct($config);
-    }
-
     public function rules()
     {
         return [
@@ -58,7 +50,7 @@ class ItemForm extends Model
         $this->_item = $item;
 
         $this->setAttributes($item->getAttributes());
-        $this->currentImage = $item->image_url;
+        $this->currentImage = $item->getImageLink();
     }
 
     public function save(): bool
@@ -79,7 +71,7 @@ class ItemForm extends Model
             $oldImageKey = $item->image_url;
 
             if ($this->image) {
-                $uploadedKey = $this->storage->uploadFile(
+                $uploadedKey = \Yii::$app->storage->uploadFile(
                     $this->image->tempName,
                     $this->image->extension,
                     $this->image->type
@@ -99,13 +91,13 @@ class ItemForm extends Model
             }
 
             if ($uploadedKey && $oldImageKey && $uploadedKey !== $oldImageKey) {
-                $this->storage->delete($oldImageKey);
+                \Yii::$app->storage->delete($oldImageKey);
             }
 
             return true;
         } catch (\Throwable $e) {
             if ($uploadedKey) {
-                $this->storage->delete($uploadedKey);
+                \Yii::$app->storage->delete($uploadedKey);
             }
 
             \Yii::error("Ошибка при сохранении трека: " . $e->getMessage(), 'item_save_error');

@@ -7,4 +7,6 @@ return [
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
+    'storageHost' => 'http://localhost:9000',
+    'storageBucket' => 'music-catalog',
 ];

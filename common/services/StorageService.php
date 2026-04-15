@@ -2,6 +2,7 @@
 
 namespace common\services;
 
+use Aws\S3\S3Client;
 use Yii;
 
 class StorageService
@@ -14,7 +15,7 @@ class StorageService
 
     public function __construct()
     {
-        $this->s3 = Yii::$app->storage;
+        $this->s3 = new S3Client(\Yii::$app->params['s3Params']);
     }
 
     public function uploadFile(string $tempPath, string $extension, string $contentType): string
@@ -42,6 +43,10 @@ class StorageService
 
     public function getUrl(string $key): string
     {
+        if (!$key) {
+            return '';
+        }
+
         return $this->s3->getObjectUrl($this->bucket, $key);
     }
 }
