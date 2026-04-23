@@ -31,7 +31,7 @@ class Item extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'artist_id', 'genre_id', 'image_url'], 'required'],
+            [['name', 'description', 'artist_id', 'image_url'], 'required'],
             [['name', 'description'], 'string'],
             [['artist_id', 'genre_id'], 'integer'],
         ];
@@ -43,9 +43,10 @@ class Item extends ActiveRecord
     }
 
 
-    public function getGenre()
+    public function getGenres()
     {
-        return $this->hasOne(Genre::class, ['id' => 'genre_id']);
+        return $this->hasMany(Genre::class, ['id' => 'genre_id'])
+                    ->viaTable('{{%item_genres}}', ['item_id' => 'id']);
     }
 
     public function getImageLink()

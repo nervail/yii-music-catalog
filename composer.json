@@ -16,10 +16,11 @@
     "require": {
         "php": ">=7.4.0",
         "yiisoft/yii2": "~2.0.45",
-        "yiisoft/yii2-bootstrap5": "~2.0.2",
         "yiisoft/yii2-symfonymailer": "~2.0.3",
         "almasaeed2010/adminlte": "~3.2",
-        "aws/aws-sdk-php": "^3.374"
+        "aws/aws-sdk-php": "^3.374",
+        "kartik-v/yii2-widget-select2": "dev-master",
+        "yiisoft/yii2-bootstrap5": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

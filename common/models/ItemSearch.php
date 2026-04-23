@@ -7,22 +7,27 @@ use yii\data\ActiveDataProvider;
 
 class ItemSearch extends Item
 {
+    public $genre_ids = [];
 
     public function rules()
     {
         return [
             [['name', 'description'], 'string'],
-            [['id', 'artist_id', 'genre_id', 'status'], 'integer'],
+            [['id', 'artist_id', 'status'], 'integer'],
+            ['genre_ids', 'each', 'rule' => ['integer']],
         ];
     }
 
     public function search($params)
     {
-        $query = Item::find()->with(['artist', 'genre']);
+        $query = Item::find()->with(['artist', 'genres']);
+        $query->joinWith('genres', false);
+        
+        $query->distinct();
 
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
-                'pagesize' => 10
+                'pageSize' => 10
             ],
             'query' => $query,
         ]);
@@ -31,12 +36,12 @@ class ItemSearch extends Item
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['id' => $this->id])
-            ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['status' => $this->status])
-            ->andFilterWhere(['artist_id' => $this->artist_id])
-            ->andFilterWhere(['genre_id' => $this->genre_id]);
+        $query->andFilterWhere(['items.id' => $this->id])
+            ->andFilterWhere(['like', 'items.name', $this->name])
+            ->andFilterWhere(['like', 'items.description', $this->description])
+            ->andFilterWhere(['items.status' => $this->status])
+            ->andFilterWhere(['items.artist_id' => $this->artist_id])
+            ->andFilterWhere(['genres.id' => $this->genre_ids]);
 
         return $dataProvider;
     }

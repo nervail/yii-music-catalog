@@ -2,9 +2,11 @@
 
 use common\models\Artist;
 use common\models\Genre;
-use Yii;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 
 ?>
 
@@ -12,18 +14,46 @@ use yii\helpers\Html;
 
 <p><?= Html::a('Add track', ['create'], ['class' => 'btn btn-success']) ?></p>
 
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline mb-2']); ?>
+<div class="item-search">
+    <?php $form = ActiveForm::begin([
+        'action' => ['index'],
+        'method' => 'get',
+        'options' => ['class' => 'form-inline mb-3'],
+        'fieldConfig' => [
+            'template' => "{input}\n{error}",
+            'options' => ['class' => 'mr-2'],
+        ],
+    ]); ?>
 
-<?= Html::activeTextInput($searchModel, 'id', ['class' => 'form-control mr-2', 'placeholder' => 'ID']) ?>
-<?= Html::activeTextInput($searchModel, 'name', ['class' => 'form-control mr-2', 'placeholder' => 'Name']) ?>
-<?= Html::activeTextInput($searchModel, 'description', ['class' => 'form-control mr-2', 'placeholder' => 'Description']) ?>
-<?= Html::activeTextInput($searchModel, 'status', ['class' => 'form-control mr-2', 'placeholder' => 'Status']) ?>
-<?= Html::activeDropDownList($searchModel, 'artist_id', Artist::getList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose an artist']) ?>
-<?= Html::activeDropDownList($searchModel, 'genre_id', Genre::getList(), ['class' => 'form-control mr-2', 'prompt' => 'Choose a genre']) ?>
-<?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-<?= Html::a('Reset', ['index'], ['class' => 'btn btn-default ml-2']) ?>
+    <?= $form->field($searchModel, 'id')->textInput(['placeholder' => 'ID', 'style' => 'width: 70px']) ?>
+    
+    <?= $form->field($searchModel, 'name')->textInput(['placeholder' => 'Name']) ?>
+    
+    <?= $form->field($searchModel, 'status')->textInput(['placeholder' => 'Status', 'style' => 'width: 100px']) ?>
 
-<?= Html::endForm(); ?>
+    <?= $form->field($searchModel, 'artist_id')->dropDownList(Artist::getList(), [
+        'prompt' => 'Choose an artist',
+        'style' => 'width: 200px'
+    ]) ?>
+
+    <?= $form->field($searchModel, 'genre_ids')->widget(Select2::class, [
+        'data' => Genre::getList(),
+        'options' => [
+            'placeholder' => 'Genres...',
+            'multiple' => true, 
+        ],
+        'pluginOptions' => [
+            'allowClear' => true,
+        ],
+    ]) ?>
+
+    <div class="form-group mr-2">
+        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Reset', ['index'], ['class' => 'btn btn-outline-secondary ml-1']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+</div>
 
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
@@ -37,8 +67,11 @@ use yii\helpers\Html;
             'value' => 'artist.name'
         ],  
         [
-            'label' => 'Genre',
-            'value' => 'genre.name'
+            'label' => 'Genres',
+            'value' => function ($model) {
+                $genres = ArrayHelper::getColumn($model->genres, 'name');
+                return implode(', ', $genres);
+            }
         ],  
         'status',
         [

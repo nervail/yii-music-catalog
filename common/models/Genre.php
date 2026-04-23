@@ -30,12 +30,13 @@ class Genre extends ActiveRecord
 
     public function getItems()
     {
-        return $this->hasMany(Item::class, ['genre_id' => 'id']);
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
+                    ->viaTable('{{%item_genres}}', ['genre_id' => 'id']);
     }
 
     public static function getList(): array
     {
-        $artists = self::find()->all();
-        return ArrayHelper::map($artists, 'id', 'name');
+        $genres = self::find()->all();
+        return ArrayHelper::map($genres, 'id', 'name');
     }
 }
