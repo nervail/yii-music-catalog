@@ -14,7 +14,7 @@ class m260417_105245_change_columns_at_items_table extends Migration
         $this->dropForeignKey('fk-item-genre', 'items');
         $this->dropColumn('{{%items}}', 'genre_id');
 
-        $this->addForeignKey('fk-items-album', '{{%items}}', 'album_id', '{{%albums}}', 'id', 'SET NULL ');
+        $this->addForeignKey('fk-items-album', '{{%items}}', 'album_id', '{{%albums}}', 'id', 'SET NULL');
     }
 
     /**
