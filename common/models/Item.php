@@ -49,6 +49,11 @@ class Item extends ActiveRecord
                     ->viaTable('{{%item_genres}}', ['item_id' => 'id']);
     }
 
+    public function getAlbum()
+    {
+        return $this->hasOne(Album::class, ['id' => 'album_id']);
+    }
+
     public function getImageLink()
     {
         return Yii::$app->storage->getUrl($this->image_url);

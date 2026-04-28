@@ -38,4 +38,9 @@ class Artist extends ActiveRecord
         $artists = self::find()->all();
         return ArrayHelper::map($artists, 'id', 'name');
     }
+
+    public function getAlbums()
+    {
+        return $this->hasMany(Album::class, ['artist_id' =>'id']);
+    }
 }
