@@ -1,4 +1,6 @@
 <?php
+
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -40,17 +42,22 @@ use yii\widgets\DetailView;
                         'id',
                         'name',
                         'description',
-                        'image_url',
+                        [
+                            'attribute' => 'image',
+                            'format' => ['image', ['style' => 'max-width: 300px; height: auto;', 'class' => 'img-thumbnail']],
+                            'value' => function ($model) {
+                                return $model->getImageLink();
+                            },
+                        ],
                         [
                             'label' => 'Artist name',
                             'value' => $model->artist->name,
                         ],
                         'artist_id',
                         [
-                            'label' => 'Genre name',
-                            'value' => $model->genre->name,
+                            'label' => 'Genres',
+                            'value' => implode(', ', ArrayHelper::getColumn($model->genres, 'name')),
                         ],
-                        'genre_id',
                         'status',
                         [
                             'label' => 'created_at',

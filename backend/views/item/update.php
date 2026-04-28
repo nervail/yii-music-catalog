@@ -4,6 +4,7 @@ use common\models\Artist;
 use common\models\Genre;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
+use kartik\select2\Select2;
 
 $this->title = 'Update Track';
 ?>
@@ -33,7 +34,7 @@ $this->title = 'Update Track';
                 <div class="form-group">
                     <?php if ($model->currentImage): ?>
                         <div class="mb-2">
-                            <p>Current Image:</p>
+                            <p><strong>Current Image:</strong></p>
                             <?= Html::img($model->currentImage, [
                                 'class' => 'img-thumbnail', 
                                 'style' => 'width: 200px;'
@@ -49,7 +50,16 @@ $this->title = 'Update Track';
                 </div>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'genre_id')->dropDownList(Genre::getList())->label('Genre')?>
+                    <?= $form->field($model, 'genre_ids')->widget(Select2::class, [
+                        'data' => Genre::getList(),
+                        'options' => [
+                            'placeholder' => 'Select genres...',
+                            'multiple' => true,
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                        ],
+                    ])->label('Genres') ?>
                 </div>
                 
             </div>

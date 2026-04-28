@@ -4,6 +4,7 @@ use common\models\Artist;
 use common\models\Genre;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
+use kartik\select2\Select2;
 
 $this->title = 'Add Track';
 ?>
@@ -39,7 +40,16 @@ $this->title = 'Add Track';
                 </div>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'genre_id')->dropDownList(Genre::getList())->label('Genre')?>
+                    <?= $form->field($model, 'genre_ids')->widget(Select2::class, [
+                        'data' => Genre::getList(),
+                        'options' => [
+                            'placeholder' => 'Select genres...',
+                            'multiple' => true,
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                        ],
+                    ])->label('Genres') ?>
                 </div>
                 
             </div>

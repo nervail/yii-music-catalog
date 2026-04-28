@@ -33,7 +33,7 @@ class Item extends ActiveRecord
         return [
             [['name', 'description', 'artist_id', 'image_url'], 'required'],
             [['name', 'description'], 'string'],
-            [['artist_id', 'genre_id'], 'integer'],
+            [['artist_id'], 'integer'],
         ];
     }
 
@@ -52,5 +52,20 @@ class Item extends ActiveRecord
     public function getImageLink()
     {
         return Yii::$app->storage->getUrl($this->image_url);
+    }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        $this->unlinkAll('genres', true);
+
+        if ($this->image_url) {
+            \Yii::$app->storage->delete($this->image_url);
+        }
+
+        return true;
     }
 }

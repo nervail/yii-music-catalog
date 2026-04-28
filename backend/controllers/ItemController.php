@@ -86,9 +86,15 @@ class ItemController extends Controller
         ];
     }
 
-    protected function findModel(int $id)
+    protected function findModel(int $id, ?array $with = [])
     {
-        if (($model = Item::findOne($id)) !== null) {
+        $query = Item::find()->where(['id' => $id]);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        if (($model = $query->one()) !== null) {
             return $model;
         }
 
@@ -127,7 +133,7 @@ class ItemController extends Controller
 
     public function actionUpdate($id)
     {
-        $item = $this->findModel($id);
+        $item = $this->findModel($id, ['genres', 'artist']);
 
         $model = new ItemForm();
         $model->scenario = ItemForm::SCENARIO_UPDATE;
@@ -149,7 +155,7 @@ class ItemController extends Controller
 
     public function actionView($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id, ['genres', 'artist']);
 
         return $this->render('view', [
             'model' => $model,
@@ -162,8 +168,9 @@ class ItemController extends Controller
 
         if (!$model->delete()) {
             Yii::$app->session->setFlash('error', 'Error while trying delete');
+        } else {
+            Yii::$app->session->setFlash('success', 'Track deleted');
         }
-        Yii::$app->session->setFlash('success', 'Track deleted');
 
         return $this->redirect('/item');
     }
