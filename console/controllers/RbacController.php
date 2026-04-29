@@ -16,7 +16,7 @@ class RbacController extends Controller
         $auth->removeAll();
 
         // Создание ролей модератора
-        $entities = ['Item', 'Artist', 'Genre'];
+        $entities = ['Item', 'Artist', 'Genre', 'Album'];
         $actions = ['index', 'view', 'create', 'update', 'delete'];
 
         $moderatorPermissions = [];
