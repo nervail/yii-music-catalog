@@ -82,7 +82,8 @@ class ItemForm extends Model
                 $uploadedKey = \Yii::$app->storage->uploadFile(
                     $this->image->tempName,
                     $this->image->extension,
-                    $this->image->type
+                    $this->image->type,
+                    'tracks'
                 );
 
                 $item->image_url = $uploadedKey;

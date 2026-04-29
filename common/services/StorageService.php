@@ -18,10 +18,10 @@ class StorageService
         $this->s3 = new S3Client(\Yii::$app->params['s3Params']);
     }
 
-    public function uploadFile(string $tempPath, string $extension, string $contentType): string
+    public function uploadFile(string $tempPath, string $extension, string $contentType, string $folder): string
     {
         $randomName = \Yii::$app->security->generateRandomString(32);
-        $key = 'tracks/' . $randomName . '.' . $extension;
+        $key = $folder . '/' . $randomName . '.' . $extension;
 
         $this->s3->putObject([
             'Bucket' => $this->bucket,
