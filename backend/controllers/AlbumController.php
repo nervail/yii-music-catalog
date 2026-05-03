@@ -3,22 +3,72 @@
 namespace backend\controllers;
 
 use common\models\Album;
+use common\models\AlbumForm;
 use common\models\AlbumSearch;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * AlbumController implements the CRUD actions for Album model.
  */
 class AlbumController extends Controller
 {
+
+    public $layout = 'admin';
+
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['indexAlbum'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['view'],
+                        'roles' => ['viewAlbum'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['createAlbum'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['updateAlbum'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['deleteAlbum'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['get-albums'],
+                        'roles' => ['@'],
+                    ],
+                ],
+                'denyCallback' => function ($rule, $action) {
+                    if (\Yii::$app->user->isGuest) {
+                        return \Yii::$app->response->redirect(['/site/login']);
+                    }
+                    
+                    throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
+                }
+            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -36,7 +86,7 @@ class AlbumController extends Controller
     public function actionIndex()
     {
         $searchModel = new AlbumSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -52,8 +102,21 @@ class AlbumController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id, ['artist', 'items']);
+
+        $trackProvider = new ActiveDataProvider([
+            'query' => $model->getItems(),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_ASC],
+            ]
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'trackProvider' => $trackProvider,
         ]);
     }
 
@@ -64,14 +127,16 @@ class AlbumController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Album();
+        $model = new AlbumForm();
+        $model->scenario = AlbumForm::SCENARIO_CREATE;
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', 'Album created');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
@@ -86,12 +151,21 @@ class AlbumController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
-        $model = $this->findModel($id);
+        $album = $this->findModel($id, ['artist', 'items']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = new AlbumForm();
+        $model->scenario = AlbumForm::SCENARIO_UPDATE;
+        $model->setFromModel($album);
+
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', 'Album updated');
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
@@ -108,7 +182,11 @@ class AlbumController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if ($this->findModel($id)->delete()) {
+            \Yii::$app->session->setFlash('success', 'Album deleted');
+        } else {
+            \Yii::$app->session->setFlash('error', 'Error deleting album');
+        }
 
         return $this->redirect(['index']);
     }
@@ -117,15 +195,55 @@ class AlbumController extends Controller
      * Finds the Album model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
+     * @param array|null $with - related records to load with the model
      * @return Album the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id, ?array $with = [])
     {
-        if (($model = Album::findOne(['id' => $id])) !== null) {
+        $query = Album::find()->where(['id' => $id]);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        if (($model = $query->one()) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException();
+    }
+
+    public function actionGetAlbums($artist_id = null, $q = null, $page = 1)
+    {
+        $artist_id = (int)$artist_id;
+        
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $query = Album::find()
+            ->select(['id', 'name AS text'])
+            ->orderBy(['name' => SORT_ASC]);
+
+        if ($artist_id) {
+            $query->andWhere(['artist_id' => $artist_id]);
+        }
+
+        if ($q) {
+            $query->andWhere(['like', 'name', $q]);
+        }
+
+        $pageSize = 20;
+
+        $query->limit($pageSize)
+            ->offset(($page - 1) * $pageSize);
+
+        $albums = $query->asArray()->all();
+
+        return [
+            'results' => $albums,
+            'pagination' => [
+                'more' => count($albums) === $pageSize
+            ]
+        ];
     }
 }

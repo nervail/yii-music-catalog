@@ -1,0 +1,116 @@
+<?php
+
+namespace common\models;
+
+use yii\base\Model;
+use yii\helpers\ArrayHelper;
+
+class AlbumForm extends Model
+{
+    public const SCENARIO_CREATE = 'create';
+    public const SCENARIO_UPDATE = 'update';
+
+    public $id;
+    public $name;
+    public $artist_id;
+    public $image;
+    public $release_date;
+    public $currentImage;
+    private ?Album $_album = null;
+
+    public function rules()
+    {
+        return [
+            [['name', 'release_date', 'artist_id'], 'required'],
+            [['artist_id'], 'integer'],
+            [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => Artist::class, 'targetAttribute' => 'id'],
+            [['name'], 'string', 'max' => 255],
+            [['release_date'], 'date', 'format' => 'php:Y-m-d'],
+            [['image'], 'file', 
+                'skipOnEmpty' => true, 
+                'extensions' => 'png, jpg, jpeg',
+                'mimeTypes' => 'image/jpeg, image/png',
+                'maxSize' => 10*1024*1024
+            ],
+            [['image'], 'required', 'on' => self::SCENARIO_CREATE],
+        ];
+    }
+
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_CREATE => ['name', 'release_date', 'artist_id', 'image'],
+            self::SCENARIO_UPDATE => ['name', 'release_date', 'artist_id', 'image'],
+        ];
+    }
+
+    public function setFromModel(Album $album): void
+    {
+        $this->_album = $album;
+
+        $this->setAttributes($album->getAttributes());
+        $this->currentImage = $album->getImageLink();
+    }
+
+    public function save(): bool
+    {
+        if ($this->scenario === self::SCENARIO_UPDATE && !$this->_album) {
+            throw new \yii\base\InvalidCallException('Для сценария update необходимо вызвать setFromModel()');
+        }
+    
+        if (!$this->validate()) {
+            return false;
+        }
+
+        $uploadedKey = null;
+
+        $transaction = \Yii::$app->db->beginTransaction();
+
+        try {
+            $album = $this->_album ?? new Album();
+
+            $oldImageKey = $album->image_url;
+
+            if ($this->image) {
+                $uploadedKey = \Yii::$app->storage->uploadFile(
+                    $this->image->tempName,
+                    $this->image->extension,
+                    $this->image->type,
+                    'albums'
+                );
+
+                $album->image_url = $uploadedKey;
+            }
+
+            $album->name = $this->name;
+            $album->release_date = $this->release_date;
+            $album->artist_id = $this->artist_id;
+
+            if (!$album->save()) {
+                $firstError = current($album->getFirstErrors());
+                $transaction->rollBack();
+                throw new \Exception($firstError ?: 'Ошибка сохранения в БД');
+            }
+
+            $transaction->commit();
+
+            if (($uploadedKey && $oldImageKey) && ($uploadedKey !== $oldImageKey)) {
+                \Yii::$app->storage->delete($oldImageKey);
+            }
+            
+            $this->id = $album->id;
+            
+            return true;
+        } catch (\Throwable $e) {
+            if ($uploadedKey) {
+                \Yii::$app->storage->delete($uploadedKey);
+            }
+            
+            $transaction->rollBack();
+
+            \Yii::error($e);
+            \Yii::$app->session->setFlash('error', 'Произошла техническая ошибка при сохранении. Пожалуйста, попробуйте позже');
+            return false;
+        }
+    }
+}

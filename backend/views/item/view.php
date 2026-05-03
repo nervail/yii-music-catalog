@@ -4,6 +4,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
+/** @var yii\web\View $this */
+/** @var common\models\Item $model */
 ?>
 
 <section class="content-header">

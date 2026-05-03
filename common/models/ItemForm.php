@@ -4,6 +4,7 @@ namespace common\models;
 
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use common\models\Album;
 
 class ItemForm extends Model
 {
@@ -15,6 +16,7 @@ class ItemForm extends Model
     public $description;
     public $image;
     public $artist_id;
+    public $album_id;
     public $genre_ids = [];
     public $currentImage;
     private ?Item $_item = null;
@@ -22,14 +24,17 @@ class ItemForm extends Model
     public function rules()
     {
         return [
-            [['name', 'description', 'artist_id', 'genre_ids'], 'required'],
-            [['artist_id'], 'integer'],
+            [['name', 'description', 'artist_id', 'album_id', 'genre_ids'], 'required'],
+            [['artist_id', 'album_id'], 'integer'],
             [['genre_ids'], 'each', 'rule' => ['integer']],
             [['genre_ids'], 'each', 'rule' => [
                 'exist', 
                 'targetClass' => Genre::class, 
                 'targetAttribute' => 'id'
             ]],
+            [['album_id'], 'exist', 'targetClass' => Album::class, 'targetAttribute' => 'id'],
+            [['artist_id'], 'exist', 'targetClass' => Artist::class, 'targetAttribute' => 'id'],
+            [['album_id'], 'validateAlbumArtist'],
             [['name'], 'string', 'max' => 255],
             [['description'], 'string'],
             [['image'], 'file', 
@@ -42,11 +47,21 @@ class ItemForm extends Model
         ];
     }
 
+    public function validateAlbumArtist($attribute, $params) 
+    {
+        if ($this->album_id) {
+            $album = Album::findOne($this->album_id);
+            if ($album && $album->artist_id != $this->artist_id) {
+                $this->addError($attribute, 'This album does not belong to the selected artist.');
+            }
+        }
+    }
+
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['name', 'description', 'artist_id', 'genre_ids', 'image'],
-            self::SCENARIO_UPDATE => ['name', 'description', 'artist_id', 'genre_ids', 'image'],
+            self::SCENARIO_CREATE => ['name', 'description', 'artist_id', 'album_id', 'genre_ids', 'image'],
+            self::SCENARIO_UPDATE => ['name', 'description', 'artist_id', 'album_id', 'genre_ids', 'image'],
         ];
     }
 
@@ -57,6 +72,15 @@ class ItemForm extends Model
         $this->setAttributes($item->getAttributes());
         $this->genre_ids = ArrayHelper::getColumn($item->genres, 'id');
         $this->currentImage = $item->getImageLink();
+    }
+
+    public function getInitialAlbums(): array
+    {
+        if (!$this->artist_id) {
+            return [];
+        }
+
+        return Album::getListByArtist($this->artist_id);
     }
 
     public function save(): bool
@@ -92,6 +116,7 @@ class ItemForm extends Model
             $item->name = $this->name;
             $item->description = $this->description;
             $item->artist_id = $this->artist_id;
+            $item->album_id = $this->album_id;
 
             if (!$item->save()) {
                 $firstError = current($item->getFirstErrors());

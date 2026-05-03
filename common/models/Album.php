@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use common\models\Artist;
 use common\models\Item;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "albums".
@@ -49,7 +50,7 @@ class Album extends \yii\db\ActiveRecord
             [['release_date', 'image_url'], 'default', 'value' => null],
             [['name', 'artist_id'], 'required'],
             [['artist_id'], 'integer'],
-            [['release_date'], 'date'],
+            [['release_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => Artist::class, 'targetAttribute' => ['artist_id' => 'id']],
         ];
@@ -73,6 +74,16 @@ class Album extends \yii\db\ActiveRecord
     public function getItems()
     {
         return $this->hasMany(Item::class, ['album_id' => 'id']);
+    }
+
+    public function getImageLink()
+    {
+        return Yii::$app->storage->getUrl($this->image_url);
+    }
+
+    public static function getListByArtist(int $artistId)
+    {
+        return ArrayHelper::map(self::findAll(['artist_id' => $artistId]), 'id', 'name');
     }
 
 }

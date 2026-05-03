@@ -1,67 +1,12 @@
 <?php
 
-use common\models\Artist;
-use common\models\Genre;
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
-use kartik\select2\Select2;
-
-$this->title = 'Add Track';
+/** @var common\models\ItemForm $model */
 ?>
-<div class="row justify-content-center pt-5">
-    <div class="col-lg-6">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><?= Html::encode($this->title) ?></h3>
-            </div>
 
-            <?php $form = ActiveForm::begin([
-                'id' => 'item-form',
-                'options' => [
-                    'enctype' => 'multipart/form-data',
-                ],
-            ]); ?>
+<div class="item-create">
 
-            <div class="card-body">
-                <div class="form-group">
-                    <?= $form->field($model, 'name')->textInput(['placeholder' => 'Track name']) ?>
-                </div>
+    <?= $this->render('_form', [
+        'model' => $model,
+    ]) ?>
 
-                <div class="form-group">
-                    <?= $form->field($model, 'description')->textarea(['placeholder' => 'Track description']) ?>
-                </div>
-
-                <div class="form-group">
-                    <?= $form->field($model, 'image')->fileInput(['placeholder' => 'Image',]) ?> 
-                </div>
-
-                <div class="form-group">
-                    <?= $form->field($model, 'artist_id')->dropDownList(Artist::getList())->label('Artist')?>
-                </div>
-
-                <div class="form-group">
-                    <?= $form->field($model, 'genre_ids')->widget(Select2::class, [
-                        'data' => Genre::getList(),
-                        'options' => [
-                            'placeholder' => 'Select genres...',
-                            'multiple' => true,
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => true,
-                        ],
-                    ])->label('Genres') ?>
-                </div>
-                
-            </div>
-    
-            <div class="card-footer">
-                <?= Html::submitButton('Submit', [
-                    'class' => 'btn btn-primary'
-                ]) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
-
-        </div>
-    </div>
 </div>

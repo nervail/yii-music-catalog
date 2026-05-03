@@ -35,10 +35,20 @@ class StorageService
 
     public function delete(string $key): void
     {
-        $this->s3->deleteObject([
-            'Bucket' => $this->bucket,
-            'Key' => $key,
-        ]);
+        if (!$key) return;
+        
+        if (filter_var($key, FILTER_VALIDATE_URL)) {
+            return;
+        }
+        
+        try {
+            $this->s3->deleteObject([
+                'Bucket' => $this->bucket,
+                'Key'    => $key,
+            ]);
+        } catch (\Aws\S3\Exception\S3Exception $e) {
+            \Yii::error("Ошибка удаления из S3: " . $e->getMessage());
+        }
     }
 
     public function getUrl(string $key): string

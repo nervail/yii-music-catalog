@@ -17,8 +17,8 @@ class AlbumSearch extends Album
     public function rules()
     {
         return [
-            [['id', 'artist_id', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'release_date', 'image_url'], 'safe'],
+            [['id', 'artist_id'], 'integer'],
+            [['name', 'release_date'], 'safe'],
         ];
     }
 
@@ -41,12 +41,18 @@ class AlbumSearch extends Album
      */
     public function search($params, $formName = null)
     {
-        $query = Album::find();
+        $query = Album::find()->with('artist');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
 
         $this->load($params, $formName);
@@ -61,13 +67,9 @@ class AlbumSearch extends Album
         $query->andFilterWhere([
             'id' => $this->id,
             'artist_id' => $this->artist_id,
-            'release_date' => $this->release_date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'image_url', $this->image_url]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

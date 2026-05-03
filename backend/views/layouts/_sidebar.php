@@ -44,6 +44,11 @@ $role = $user->role;
                     'visible' => Yii::$app->user->can('moderator'),
                     'items' => [
                         [
+                            'label' => 'Albums', 
+                            'icon' => 'fas fa-compact-disc',
+                            'url' => ['/album/index'],
+                        ],
+                        [
                             'label' => 'Artists', 
                             'icon' => 'fas fa-microphone', 
                             'url' => ['/artist/index'],

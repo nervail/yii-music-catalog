@@ -8,6 +8,8 @@ use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 
+/** @var common\models\ItemSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
 ?>
 
 <h1>Tracks</h1>
