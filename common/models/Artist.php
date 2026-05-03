@@ -28,6 +28,14 @@ class Artist extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'name',
+        ];
+     }
+
     public function getItems()
     {
         return $this->hasMany(Item::class, ['artist_id' => 'id']);

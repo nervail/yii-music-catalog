@@ -56,6 +56,14 @@ class Album extends \yii\db\ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'name',
+        ];
+     }
+
     /**
      * Gets query for [[Artist]].
      *

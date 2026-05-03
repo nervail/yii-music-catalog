@@ -12,36 +12,36 @@ class m260225_063042_create_subscriptions_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%subscriptions}}', [
+        $this->createTable('{{%subscription}}', [
             'id' => $this->primaryKey(),
-            'following_user_id' => $this->integer()->notNull(),
-            'followed_artist_id' => $this->integer()->notNull(),
+            'user_id' => $this->integer()->notNull(),
+            'artist_id' => $this->integer()->notNull(),
             'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
         ]);
 
         $this->addForeignKey(
-            'fk-sub-user',
-            'subscriptions',
-            'following_user_id',
-            'users',
+            'fk-subscription-user',
+            '{{%subscription}}',
+            'user_id',
+            '{{%users}}',
             'id',
             'CASCADE'
         );
 
         $this->addForeignKey(
-            'fk-sub-artist',
-            'subscriptions',
-            'followed_artist_id',
-            'artists',
+            'fk-subscription-artist',
+            '{{%subscription}}',
+            'artist_id',
+            '{{%artists}}',
             'id',
             'CASCADE'
         );
 
+        // Уникальный индекс, чтобы нельзя было подписаться дважды
         $this->createIndex(
             'idx-subscription-user-artist',
-            'subscriptions',
-            ['following_user_id', 'followed_artist_id'],
+            '{{%subscription}}',
+            ['user_id', 'artist_id'],
             true
         );
     }
@@ -51,8 +51,8 @@ class m260225_063042_create_subscriptions_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-sub-user', 'subscriptions');
-        $this->dropForeignKey('fk-sub-artist', 'subscriptions');
+        $this->dropForeignKey('fk-subscription-user', 'subscriptions');
+        $this->dropForeignKey('fk-subscription-artist', 'subscriptions');
         $this->dropIndex('idx-subscription-user-artist', 'subscriptions');
         $this->dropTable('{{%subscriptions}}');
     }

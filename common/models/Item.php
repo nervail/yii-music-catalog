@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use common\models\Artist;
 use common\models\Genre;
+use Override;
 
 class Item extends ActiveRecord
 {
@@ -35,6 +36,25 @@ class Item extends ActiveRecord
             [['name', 'description'], 'string'],
             [['artist_id'], 'integer'],
         ];
+    }
+
+    public function fields()
+    {
+        return [
+            'id',
+            'name',
+            'description',
+            'image_url' => function ($model) {
+                return $model->getImageLink();
+            },
+            'artist_id',
+            'album_id',
+        ];
+    }
+
+    public function extraFields()
+    {
+        return ['artist', 'album'];
     }
 
     public function getArtist()

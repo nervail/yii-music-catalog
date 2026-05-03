@@ -1,13 +1,13 @@
 <?php
 
-namespace frontend\controllers;
+namespace frontend\controllers\api;
 
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use yii\rest\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
@@ -15,6 +15,8 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use common\models\User;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Site controller
@@ -75,7 +77,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return [
+            'status' => 'OK',
+            'version' => '1.0.0',
+            'message' => 'Music Catalog API',
+            'time' => date('Y-m-d H:i:s'),
+        ];
     }
 
     /**
@@ -85,20 +92,23 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+
+        if ($model->load(Yii::$app->request->post(), '') && $model->login()) {
+
+            /** @var User $user */
+            $user = \Yii::$app->user->identity;
+
+            $user->generateAccessToken();
+            $user->save(false);
+
+            return [
+                'access_token' => $user->access_token,
+                'username' => $user->username,
+            ];
         }
 
-        $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        throw new UnauthorizedHttpException('Incorrect username or password.');
     }
 
     /**
