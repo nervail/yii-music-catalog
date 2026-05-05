@@ -1,8 +1,8 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\modules\admin\controllers;
 
-use backend\models\UpdateUserForm;
+use backend\modules\admin\models\UpdateUserForm;
 use common\models\User;
 use common\models\UserSearch;
 use Yii;
@@ -58,7 +58,7 @@ class UserController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
-                        return Yii::$app->response->redirect(['/site/login']);
+                        return \Yii::$app->response->redirect(['/admin/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
@@ -141,7 +141,7 @@ class UserController extends Controller
             Yii::$app->session->setFlash('error', 'Error while deleting user');   
         }
 
-        return $this->redirect('/user');
+        return $this->redirect('index');
     }
 
     public function actionBan(int $id)
@@ -154,7 +154,7 @@ class UserController extends Controller
             Yii::$app->session->setFlash('error', 'Error while banning user');
         }
 
-        return $this->redirect('/user');
+        return $this->redirect('index');
 
     }
 
@@ -168,7 +168,7 @@ class UserController extends Controller
             Yii::$app->session->setFlash('error', 'Error while restored user');
         }
 
-        return $this->redirect('/user');
+        return $this->redirect('index');
 
     }
 }

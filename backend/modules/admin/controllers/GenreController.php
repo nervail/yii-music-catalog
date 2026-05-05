@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\modules\admin\controllers;
 
 use common\models\Genre;
 use common\models\GenreSearch;
@@ -55,7 +55,7 @@ class GenreController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
-                        return Yii::$app->response->redirect(['/site/login']);
+                        return \Yii::$app->response->redirect(['/admin/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
@@ -113,7 +113,7 @@ class GenreController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully added new genre!');
-            return $this->redirect('/genre');
+            return $this->redirect('index');
         }
         return $this->render('create', [
             'model' => $model,
@@ -133,7 +133,7 @@ class GenreController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully updated genre!');
-            return $this->redirect('/genre');
+            return $this->redirect('index');
         }
 
         return $this->render('update', [

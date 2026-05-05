@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\modules\admin\controllers;
 
 use common\models\LoginForm;
 use Yii;
@@ -48,7 +48,7 @@ class SiteController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
-                        return Yii::$app->response->redirect(['/site/login']);
+                        return \Yii::$app->response->redirect(['/admin/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
@@ -96,7 +96,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(['site/index']);
+            return $this->redirect(['index']);
         }
 
         $model->password = '';
@@ -115,6 +115,6 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->redirect('/site/login');
+        return $this->redirect('login');
     }
 }

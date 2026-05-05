@@ -12,7 +12,11 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'admin' => [
+            'class' => 'backend\modules\admin\Module',
+        ],
+    ],
     'container' => [
         'definitions' => [
             \yii\widgets\LinkPager::class => \yii\bootstrap5\LinkPager::class,
@@ -41,12 +45,13 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'admin/site/error',
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '' => 'admin/site/index',
             ],
         ],
         'formatter' => [

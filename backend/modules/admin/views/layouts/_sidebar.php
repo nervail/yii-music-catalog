@@ -18,7 +18,7 @@ $role = $user->role;
         </div>
         <?php if (!\Yii::$app->user->isGuest): ?>
 
-            <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post', [
+            <?= \yii\helpers\Html::beginForm(['/admin/site/logout'], 'post', [
                 'class' => 'mt-2'
             ]) ?>
 
@@ -35,7 +35,7 @@ $role = $user->role;
     <nav class="mt-2">
         <?= SidebarMenu::widget([
             'items' => [
-                ['label' => 'Dashboard', 'icon' => 'fas fa-th', 'url' => ['/site/index']],
+                ['label' => 'Dashboard', 'icon' => 'fas fa-th', 'url' => ['/admin/site/index']],
                 
                 // РАЗДЕЛ КАТАЛОГ (Виден админам и модераторам)
                 [
@@ -46,22 +46,22 @@ $role = $user->role;
                         [
                             'label' => 'Albums', 
                             'icon' => 'fas fa-compact-disc',
-                            'url' => ['/album/index'],
+                            'url' => ['/admin/album/index'],
                         ],
                         [
                             'label' => 'Artists', 
                             'icon' => 'fas fa-microphone', 
-                            'url' => ['/artist/index'],
+                            'url' => ['/admin/artist/index'],
                         ],
                         [
                             'label' => 'Genres', 
                             'icon' => 'fas fa-music', 
-                            'url' => ['/genre/index'],
+                            'url' => ['/admin/genre/index'],
                         ],
                         [
                             'label' => 'Tracks', 
                             'icon' => 'fas fa-play-circle', 
-                            'url' => ['/item/index'],
+                            'url' => ['/admin/item/index'],
                         ],
                     ],
                 ],
@@ -70,7 +70,7 @@ $role = $user->role;
                 [
                     'label' => 'User Management',
                     'icon' => 'fas fa-users-cog',
-                    'url' => ['/user/index'],
+                    'url' => ['/admin/user/index'],
                     'visible' => Yii::$app->user->can('admin'),
                 ],
             ],

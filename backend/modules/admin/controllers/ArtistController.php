@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\modules\admin\controllers;
 
 use common\models\Artist;
 use common\models\ArtistSearch;
@@ -55,7 +55,7 @@ class ArtistController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (Yii::$app->user->isGuest) {
-                        return Yii::$app->response->redirect(['/site/login']);
+                        return \Yii::$app->response->redirect(['/admin/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
@@ -113,7 +113,7 @@ class ArtistController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully added new artist!');
-            return $this->redirect('/artist');
+            return $this->redirect('index');
         }
         return $this->render('create', [
             'model' => $model,
@@ -133,7 +133,7 @@ class ArtistController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Successfully updated artist!');
-            return $this->redirect('/artist');
+            return $this->redirect('index');
         }
 
         return $this->render('update', [

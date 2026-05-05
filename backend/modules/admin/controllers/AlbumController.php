@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\modules\admin\controllers;
 
 use common\models\Album;
 use common\models\AlbumForm;
@@ -63,7 +63,7 @@ class AlbumController extends Controller
                 ],
                 'denyCallback' => function ($rule, $action) {
                     if (\Yii::$app->user->isGuest) {
-                        return \Yii::$app->response->redirect(['/site/login']);
+                        return \Yii::$app->response->redirect(['/admin/site/login']);
                     }
                     
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
