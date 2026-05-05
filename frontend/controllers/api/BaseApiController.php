@@ -2,51 +2,50 @@
 
 namespace frontend\controllers\api;
 
-use yii\filters\AccessControl;
-use yii\rest\ActiveController;
+use frontend\components\api\ApiResponseTrait;
+use frontend\exceptions\ValidationException;
+use InvalidArgumentException;
+use yii\base\Model;
+use yii\db\ActiveRecordInterface;
+use yii\rest\Controller;
+use yii\filters\auth\HttpBearerAuth;
+use yii\web\NotFoundHttpException;
 
-class BaseApiController extends ActiveController
+class BaseApiController extends Controller
 {
-    public $resourceName;
+    use ApiResponseTrait;
 
     public function behaviors()
     {
         $behaviors = parent::behaviors();
 
-        $behaviors['access'] = [
-            'class' => AccessControl::class,
-            'rules' => [
-                [
-                    'allow' => true,
-                    'actions' => ['index'],
-                    'roles' => ["apiIndex{$this->resourceName}"],
-                ],
-                [
-                    'allow' => true,
-                    'actions' => ['view'],
-                    'roles' => ["apiView{$this->resourceName}"],
-                ],
-                [
-                    'allow' => true,
-                    'actions' => ['options'],
-                    'roles' => ['?', '@'],
-                ],
-            ],
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
         ];
-
         return $behaviors;
     }
 
-    public function actions()
+    public function findModel(int $id, string $modelClass)
     {
-        $actions = parent::actions();
+        if (!is_subclass_of($modelClass, ActiveRecordInterface::class)) {
+            throw new InvalidArgumentException("Class $modelClass must implement ActiveRecord interface");
+        }
 
-        // disable the "delete" and "create" actions
-        unset($actions['delete'], $actions['create'], $actions['update']);
+        if (($model = $modelClass::findOne($id)) !== null) {
+            return $model;
+        }
 
-        // customize the data provider preparation with the "prepareDataProvider()" method
-        // $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        throw new NotFoundHttpException('Object not found');
+    }
 
-        return $actions;
+    public function errorIfInvalid($model)
+    {
+        if (!$model instanceof Model) {
+            throw new InvalidArgumentException("Argument must be an instance of yii\\base\\Model");
+        }
+        
+        if ($model->hasErrors()) {
+            throw new ValidationException($model->getErrors());
+        }
     }
 }

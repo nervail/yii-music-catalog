@@ -54,7 +54,7 @@ class Item extends ActiveRecord
 
     public function extraFields()
     {
-        return ['artist', 'album'];
+        return ['artist', 'album', 'genres'];
     }
 
     public function getArtist()

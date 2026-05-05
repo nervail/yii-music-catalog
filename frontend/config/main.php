@@ -1,7 +1,9 @@
 <?php
 
+use frontend\components\api\ApiErrorHandler;
 use yii\rest\UrlRule;
 use yii\web\JsonParser;
+use yii\web\Response;
 use yii\web\UrlNormalizer;
 
 $params = array_merge(
@@ -13,17 +15,6 @@ $params = array_merge(
 
 return [
     'id' => 'app-frontend',
-    'as authenticator' => [
-        'class' => \yii\filters\auth\HttpBearerAuth::class,
-        'optional' => [
-            'api/site/login',
-            'api/site/index',
-            'api/site/signup',
-            'api/site/error',
-            'debug/*',
-            'gii/*',
-        ],
-    ],
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
@@ -54,7 +45,7 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'class' => ApiErrorHandler::class,
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -66,16 +57,22 @@ return [
             ],
             'rules' => [
                 'POST api/login' => 'api/site/login',
+                'POST api/signup' => 'api/site/signup',
+                'POST api/logout' => 'api/site/logout',
+
                 'GET api' => 'api/site/index',
-                [
-                    'class' => UrlRule::class, 
-                    'controller' => [
-                        'api/item',
-                        'api/artist',
-                        'api/album',
-                    ],
-                    'only' => ['index', 'view', 'options']
-                ]
+
+                'GET api/items' => 'api/item/index',
+                'GET api/items/<id:\d+>' => 'api/item/view',
+                
+                'GET api/genres' => 'api/genre/index',
+                'GET api/genres/<id:\d+>' => 'api/genre/view',
+
+                'GET api/albums' => 'api/album/index',
+                'GET api/albums/<id:\d+>' => 'api/album/view',
+
+                'GET api/artists' => 'api/artist/index',
+                'GET api/artists/<id:\d+>' => 'api/artist/view',
             ],
         ],
     ],
