@@ -62,7 +62,12 @@ class Album extends \yii\db\ActiveRecord
             'id',
             'name',
         ];
-     }
+    }
+
+    public function extraFields()
+    {
+        return ['artist', 'items'];
+    }
 
     /**
      * Gets query for [[Artist]].

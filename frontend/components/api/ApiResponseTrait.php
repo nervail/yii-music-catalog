@@ -3,6 +3,7 @@
 namespace frontend\components\api;
 
 use yii\data\DataProviderInterface;
+use yii\rest\Serializer;
 
 trait ApiResponseTrait
 {
@@ -22,21 +23,10 @@ trait ApiResponseTrait
      */
     protected function prepareResource(DataProviderInterface $dataProvider, string $keyName)
     {
-        $pagination = $dataProvider->getPagination();
-        
-        $result = [
-            $keyName => $dataProvider->getModels(),
-        ];
+        $serializer = new Serializer([
+            'collectionEnvelope' => $keyName,
+        ]);
 
-        if ($pagination !== false) {
-            $result['pagination'] = [
-                'totalCount'  => (int)$dataProvider->getTotalCount(),
-                'pageCount'   => (int)$pagination->getPageCount(),
-                'currentPage' => (int)$pagination->getPage() + 1,
-                'pageSize'    => (int)$pagination->getPageSize(),
-            ];
-        }
-
-        return $result;
+        return $serializer->serialize($dataProvider);
     }
 }

@@ -34,7 +34,12 @@ class Artist extends ActiveRecord
             'id',
             'name',
         ];
-     }
+    }
+
+    public function extraFields()
+    {
+        return ['items', 'albums'];
+    }
 
     public function getItems()
     {
