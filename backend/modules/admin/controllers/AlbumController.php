@@ -18,6 +18,7 @@ use yii\web\UploadedFile;
  */
 class AlbumController extends Controller
 {
+    public const PAGE_SIZE = 20;
 
     public $layout = 'admin';
 
@@ -214,25 +215,27 @@ class AlbumController extends Controller
         throw new NotFoundHttpException();
     }
 
-    public function actionGetAlbums($artist_id = null, $q = null, $page = 1)
+    public function actionGetAlbums()
     {
-        $artist_id = (int)$artist_id;
-        
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $model = new AlbumForm();
+        $model->scenario = AlbumForm::SCENARIO_GET_ALBUMS;
+
+        if (! ($model->load(\Yii::$app->request->get(), '')) || !($model->validate())) {
+            throw new NotFoundHttpException('Invalid parameters');
+        }
+        
         $query = Album::find()
             ->select(['id', 'name AS text'])
             ->orderBy(['name' => SORT_ASC]);
 
-        if ($artist_id) {
-            $query->andWhere(['artist_id' => $artist_id]);
-        }
+        $query->andWhere(['artist_id' => $model->artist_id]);
 
-        if ($q) {
-            $query->andWhere(['like', 'name', $q]);
-        }
+        $query->andFilterWhere(['like', 'name', $model->name]);
 
-        $pageSize = 20;
+        $pageSize = self::PAGE_SIZE;
+        $page = \Yii::$app->request->get('page', 1);
 
         $query->limit($pageSize)
             ->offset(($page - 1) * $pageSize);

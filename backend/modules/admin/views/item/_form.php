@@ -101,7 +101,7 @@ $this->registerCss("
                                 'data' => new JsExpression("function(params) {
                                     return {
                                         artist_id: $('#artist-id').val(),
-                                        q: params.term,
+                                        name: params.term,
                                         page: params.page || 1
                                     };
                                 }"),
