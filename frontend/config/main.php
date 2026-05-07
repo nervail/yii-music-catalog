@@ -1,9 +1,7 @@
 <?php
 
 use frontend\components\api\ApiErrorHandler;
-use yii\rest\UrlRule;
 use yii\web\JsonParser;
-use yii\web\Response;
 use yii\web\UrlNormalizer;
 
 $params = array_merge(
@@ -21,13 +19,6 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
-            'parsers' => [
-                'application/json' => JsonParser::class
-            ],
-        ],
-        'response' => [
-            'format' => \yii\web\Response::FORMAT_JSON,
-            'charset' => 'UTF-8',
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -44,9 +35,6 @@ return [
                 ],
             ],
         ],
-        'errorHandler' => [
-            'class' => ApiErrorHandler::class,
-        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -56,23 +44,6 @@ return [
                 'action' => UrlNormalizer::ACTION_REDIRECT_TEMPORARY,
             ],
             'rules' => [
-                'POST api/login' => 'api/site/login',
-                'POST api/signup' => 'api/site/signup',
-                'POST api/logout' => 'api/site/logout',
-
-                'GET api' => 'api/site/index',
-
-                'GET api/items' => 'api/item/index',
-                'GET api/items/<id:\d+>' => 'api/item/view',
-                
-                'GET api/genres' => 'api/genre/index',
-                'GET api/genres/<id:\d+>' => 'api/genre/view',
-
-                'GET api/albums' => 'api/album/index',
-                'GET api/albums/<id:\d+>' => 'api/album/view',
-
-                'GET api/artists' => 'api/artist/index',
-                'GET api/artists/<id:\d+>' => 'api/artist/view',
             ],
         ],
     ],

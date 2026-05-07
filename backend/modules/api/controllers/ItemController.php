@@ -1,12 +1,12 @@
 <?php
 
-namespace frontend\controllers\api;
-    
-use common\models\Genre;
-use frontend\controllers\api\BaseApiController;
+namespace backend\modules\api\controllers;
+
+use common\models\Item;
+use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 
-class GenreController extends BaseApiController
+class ItemController extends BaseApiController
 {
     public function behaviors()
     {
@@ -23,19 +23,19 @@ class GenreController extends BaseApiController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Genre::find(),
+            'query' => Item::find(),
             'pagination' => [
                 'pageSize' => 20,
             ],
         ]);
 
-        return $this->success($this->prepareResource($dataProvider, 'genres'));
+        return $this->success($this->prepareResource($dataProvider, 'items'));
     }
 
-        public function actionView(int $id)
-        {
-            $item = $this->findModel($id, Genre::class);
+    public function actionView(int $id)
+    {
+        $item = $this->findModel($id, Item::class);
 
-            return $this->success($item);
-        }
+        return $this->success($item);
+    }
 }

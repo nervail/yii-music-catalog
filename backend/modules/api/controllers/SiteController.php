@@ -1,17 +1,17 @@
 <?php
 
-namespace frontend\controllers\api;
+namespace backend\modules\api\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\VerifyEmailForm;
+use backend\modules\api\models\ResendVerificationEmailForm;
+use backend\modules\api\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
-use frontend\controllers\api\BaseApiController;
+use backend\modules\api\controllers\BaseApiController;
 use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
+use backend\modules\api\models\PasswordResetRequestForm;
+use backend\modules\api\models\ResetPasswordForm;
+use backend\modules\api\models\SignupForm;
 use common\models\User;
 use yii\web\ServerErrorHttpException;
 use yii\web\UnauthorizedHttpException;

@@ -1,12 +1,12 @@
 <?php
 
-namespace frontend\controllers\api;
+namespace backend\modules\api\controllers;
 
-use common\models\Album;
-use frontend\controllers\api\BaseApiController;
+use common\models\Artist;
+use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 
-class AlbumController extends BaseApiController
+class ArtistController extends BaseApiController
 {
     public function behaviors()
     {
@@ -23,18 +23,18 @@ class AlbumController extends BaseApiController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Album::find(),
+            'query' => Artist::find(),
             'pagination' => [
                 'pageSize' => 20,
             ],
         ]);
 
-        return $this->success($this->prepareResource($dataProvider, 'albums'));
+        return $this->success($this->prepareResource($dataProvider, 'artists'));
     }
 
     public function actionView(int $id)
     {
-        $item = $this->findModel($id, Album::class);
+        $item = $this->findModel($id, Artist::class);
 
         return $this->success($item);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\components\api;
+namespace backend\modules\api\components;
 
 use yii\data\DataProviderInterface;
 use yii\rest\Serializer;

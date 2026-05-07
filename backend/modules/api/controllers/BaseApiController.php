@@ -1,15 +1,16 @@
 <?php
 
-namespace frontend\controllers\api;
+namespace backend\modules\api\controllers;
 
-use frontend\components\api\ApiResponseTrait;
-use frontend\exceptions\ValidationException;
+use backend\modules\api\components\ApiResponseTrait;
+use backend\modules\api\exceptions\ValidationException;
 use InvalidArgumentException;
 use yii\base\Model;
 use yii\db\ActiveRecordInterface;
 use yii\rest\Controller;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class BaseApiController extends Controller
 {
@@ -23,6 +24,20 @@ class BaseApiController extends Controller
             'class' => HttpBearerAuth::class,
         ];
         return $behaviors;
+    }
+
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        \Yii::$app->user->enableSession = false;
+        \Yii::$app->user->loginUrl = null;
+
+        return true;
     }
 
     public function findModel(int $id, string $modelClass)

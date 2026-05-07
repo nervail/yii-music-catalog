@@ -1,5 +1,9 @@
 <?php
 
+use backend\modules\api\components\ApiErrorHandler;
+use yii\web\JsonParser;
+use yii\web\UrlNormalizer;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -16,6 +20,9 @@ return [
         'admin' => [
             'class' => 'backend\modules\admin\Module',
         ],
+        'api' => [
+            'class' => 'backend\modules\api\Module',
+        ],
     ],
     'container' => [
         'definitions' => [
@@ -25,6 +32,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'parsers' => [
+                'application/json' => JsonParser::class,
+            ],
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -45,12 +55,24 @@ return [
             ],
         ],
         'errorHandler' => [
+            'class' => ApiErrorHandler::class,
             'errorAction' => 'admin/site/error',
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'normalizer' => [
+                'class' => 'yii\web\UrlNormalizer',
+                // use temporary redirection instead of permanent for debugging
+                'action' => UrlNormalizer::ACTION_REDIRECT_TEMPORARY,
+            ],
             'rules' => [
+                [
+                    'class' => \yii\web\GroupUrlRule::class,
+                    'prefix' => 'api',
+                    'rules' => require __DIR__ . '/../../backend/modules/api/rules.php',
+                ],
+                
                 '' => 'admin/site/index',
             ],
         ],

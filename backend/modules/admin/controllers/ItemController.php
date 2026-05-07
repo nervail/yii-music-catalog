@@ -118,6 +118,7 @@ class ItemController extends Controller
         $model->scenario = ItemForm::SCENARIO_CREATE;
 
         if ($model->load(Yii::$app->request->post())) {
+            throw new NotFoundHttpException(print_r($model->attributes, true));
             $model->image = UploadedFile::getInstance($model, 'image');
 
             if ($model->save()) {
