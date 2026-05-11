@@ -2,16 +2,16 @@
 
 namespace backend\modules\api\controllers;
 
-use backend\modules\api\models\ResendVerificationEmailForm;
-use backend\modules\api\models\VerifyEmailForm;
+use backend\modules\api\forms\ResendVerificationEmailForm;
+use backend\modules\api\forms\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
 use backend\modules\api\controllers\BaseApiController;
 use common\forms\LoginForm;
-use backend\modules\api\models\PasswordResetRequestForm;
-use backend\modules\api\models\ResetPasswordForm;
-use backend\modules\api\models\SignupForm;
+use backend\modules\api\forms\PasswordResetRequestForm;
+use backend\modules\api\forms\ResetPasswordForm;
+use backend\modules\api\forms\SignupForm;
 use common\entities\User;
 use yii\web\ServerErrorHttpException;
 use yii\web\UnauthorizedHttpException;
