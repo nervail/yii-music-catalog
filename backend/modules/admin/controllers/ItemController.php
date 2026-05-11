@@ -2,10 +2,10 @@
 
 namespace backend\modules\admin\controllers;
 
-use common\models\Artist;
-use common\models\Item;
-use common\models\ItemForm;
-use common\models\ItemSearch;
+use common\entities\Artist;
+use common\entities\Item;
+use common\forms\ItemForm;
+use common\search\ItemSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;

@@ -1,12 +1,12 @@
 <?php
 
-use common\models\Artist;
+use common\entities\Artist;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\AlbumSearch $searchModel */
+/** @var common\search\AlbumSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Albums Catalog';

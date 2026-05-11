@@ -2,7 +2,7 @@
 
 namespace backend\modules\api\models;
 
-use common\models\User;
+use common\entities\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 

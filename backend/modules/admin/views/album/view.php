@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\models\Album $model */
+/** @var common\entities\Album $model */
 /** @var yii\data\ActiveDataProvider $trackProvider */
 
 ?>

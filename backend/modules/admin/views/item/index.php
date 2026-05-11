@@ -1,14 +1,14 @@
 <?php
 
-use common\models\Artist;
-use common\models\Genre;
+use common\entities\Artist;
+use common\entities\Genre;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 
-/** @var common\models\ItemSearch $searchModel */
+/** @var common\search\ItemSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 ?>
 

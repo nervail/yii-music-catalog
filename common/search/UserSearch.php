@@ -1,8 +1,8 @@
 <?php
 
-namespace common\models;
+namespace common\search;
 
-use common\models\User;
+use common\entities\User;
 use yii\data\ActiveDataProvider;
 
 class UserSearch extends User

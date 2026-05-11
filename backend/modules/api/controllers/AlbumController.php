@@ -2,7 +2,7 @@
 
 namespace backend\modules\api\controllers;
 
-use common\models\Album;
+use common\entities\Album;
 use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 

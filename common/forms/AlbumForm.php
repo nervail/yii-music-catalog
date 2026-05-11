@@ -1,9 +1,10 @@
 <?php
 
-namespace common\models;
+namespace common\forms;
 
+use common\entities\Album;
 use yii\base\Model;
-use yii\helpers\ArrayHelper;
+use common\entities\Artist;
 
 class AlbumForm extends Model
 {

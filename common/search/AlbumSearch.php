@@ -1,13 +1,13 @@
 <?php
 
-namespace common\models;
+namespace common\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Album;
+use common\entities\Album;
 
 /**
- * AlbumSearch represents the model behind the search form of `common\models\Album`.
+ * AlbumSearch represents the model behind the search form of `common\entities\Album`.
  */
 class AlbumSearch extends Album
 {

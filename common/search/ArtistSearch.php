@@ -1,8 +1,8 @@
 <?php
 
-namespace common\models;
+namespace common\search;
 
-use common\models\Artist;
+use common\entities\Artist;
 use yii\data\ActiveDataProvider;
 
 class ArtistSearch extends Artist

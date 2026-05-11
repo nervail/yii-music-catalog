@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Album $model */
+/** @var common\entities\Album $model */
 
 ?>
 <div class="album-create">

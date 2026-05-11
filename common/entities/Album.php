@@ -1,11 +1,11 @@
 <?php
 
-namespace common\models;
+namespace common\entities;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use common\models\Artist;
-use common\models\Item;
+use common\entities\Artist;
+use common\entities\Item;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -19,8 +19,8 @@ use yii\helpers\ArrayHelper;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property Artists $artist
- * @property Items[] $items
+ * @property Artist $artist
+ * @property Item[] $items
  */
 class Album extends \yii\db\ActiveRecord
 {

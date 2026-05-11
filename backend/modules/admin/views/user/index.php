@@ -1,6 +1,6 @@
 <?php
 
-use common\models\User;
+use common\entities\User;
 use yii\grid\GridView;
 use yii\helpers\Html;
 

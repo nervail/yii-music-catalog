@@ -2,8 +2,8 @@
 
 namespace backend\modules\admin\controllers;
 
-use common\models\Artist;
-use common\models\ArtistSearch;
+use common\entities\Artist;
+use common\search\ArtistSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;

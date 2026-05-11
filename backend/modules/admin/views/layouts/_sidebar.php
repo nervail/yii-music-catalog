@@ -1,6 +1,6 @@
 <?php
 use backend\widgets\SidebarMenu;
-use common\models\User;
+use common\entities\User;
 use yii\helpers\Html;
 
 $user = Yii::$app->user->identity;

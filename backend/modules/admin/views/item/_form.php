@@ -1,15 +1,14 @@
 <?php
 
-use common\models\Album;
-use common\models\Artist;
-use common\models\Genre;
+use common\entities\Artist;
+use common\entities\Genre;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use kartik\select2\Select2;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
-/** @var common\models\ItemForm $model */
+/** @var common\forms\ItemForm $model */
 
 $this->title = $model->scenario === 'create' ? 'Add Track' : 'Update Track' . ': ' . $model->name;
 

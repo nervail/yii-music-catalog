@@ -1,6 +1,6 @@
 <?php
 
-/** @var common\models\ItemForm $model */
+/** @var common\forms\ItemForm $model */
 ?>
 
 <div class="item-create">

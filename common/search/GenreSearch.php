@@ -1,8 +1,8 @@
 <?php
 
-namespace common\models;
+namespace common\search;
 
-use common\models\Genre;
+use common\entities\Genre;
 use yii\data\ActiveDataProvider;
 
 class GenreSearch extends Genre

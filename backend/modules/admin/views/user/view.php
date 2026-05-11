@@ -2,9 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use common\models\User;
+use common\entities\User;
 
-/** @var $model common\models\User */
+/** @var $model common\entities\User */
 ?>
 
 <div class="user-view">

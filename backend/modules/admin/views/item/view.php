@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\models\Item $model */
+/** @var common\entities\Item $model */
 ?>
 
 <section class="content-header">

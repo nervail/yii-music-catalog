@@ -2,7 +2,7 @@
 
 namespace backend\modules\api\controllers;
 
-use common\models\Item;
+use common\entities\Item;
 use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 

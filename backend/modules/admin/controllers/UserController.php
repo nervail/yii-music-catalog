@@ -2,9 +2,9 @@
 
 namespace backend\modules\admin\controllers;
 
-use backend\modules\admin\models\UpdateUserForm;
-use common\models\User;
-use common\models\UserSearch;
+use backend\modules\admin\forms\UpdateUserForm;
+use common\entities\User;
+use common\search\UserSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;

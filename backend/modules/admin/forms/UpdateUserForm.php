@@ -1,10 +1,10 @@
 <?php
 
-namespace backend\modules\admin\models;
+namespace backend\modules\admin\forms;
 
 use Yii;
 use yii\base\Model;
-use common\models\User;
+use common\entities\User;
 
 /**
  * Login form

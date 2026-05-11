@@ -1,13 +1,12 @@
 <?php
 
-namespace common\models;
+namespace common\entities;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use common\models\Artist;
-use common\models\Genre;
-use Override;
+use common\entities\Artist;
+use common\entities\Genre;
 
 class Item extends ActiveRecord
 {

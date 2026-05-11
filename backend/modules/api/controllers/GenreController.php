@@ -2,7 +2,7 @@
 
 namespace backend\modules\api\controllers;
     
-use common\models\Genre;
+use common\entities\Genre;
 use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 

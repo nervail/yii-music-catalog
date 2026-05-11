@@ -8,11 +8,11 @@ use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
 use backend\modules\api\controllers\BaseApiController;
-use common\models\LoginForm;
+use common\forms\LoginForm;
 use backend\modules\api\models\PasswordResetRequestForm;
 use backend\modules\api\models\ResetPasswordForm;
 use backend\modules\api\models\SignupForm;
-use common\models\User;
+use common\entities\User;
 use yii\web\ServerErrorHttpException;
 use yii\web\UnauthorizedHttpException;
 

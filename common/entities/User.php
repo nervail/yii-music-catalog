@@ -1,13 +1,13 @@
 <?php
 
-namespace common\models;
+namespace common\entities;
 
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
+use common\entities\AuthAssignment;
 
 /**
  * User model
@@ -38,17 +38,6 @@ class User extends ActiveRecord implements IdentityInterface
         return '{{%users}}';
     }
 
-    public static function create(string $username, string $email, string $password): self
-    {
-        $user = new static();
-        $user->username = $username;
-        $user->email = $email;
-        $user->setPassword($password);
-        $user->generateAuthKey();
-        $user->generateEmailVerificationToken();
-        return $user;
-    }
-
     public static function getStatusList()
     {
         return [
@@ -59,7 +48,7 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    public static function getStatusBadgeClass(int $status): string
+    public static function getStatusBadgeClass($status)
     {
         return match ($status) {
             self::STATUS_DELETED => 'badge bg-secondary',

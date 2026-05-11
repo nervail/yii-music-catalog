@@ -1,8 +1,8 @@
 <?php
 
-namespace common\models;
+namespace common\search;
 
-use common\models\Item;
+use common\entities\Item;
 use yii\data\ActiveDataProvider;
 
 class ItemSearch extends Item

@@ -2,8 +2,8 @@
 
 namespace backend\modules\admin\controllers;
 
-use common\models\Genre;
-use common\models\GenreSearch;
+use common\entities\Genre;
+use common\search\GenreSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;

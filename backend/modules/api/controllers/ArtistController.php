@@ -2,7 +2,7 @@
 
 namespace backend\modules\api\controllers;
 
-use common\models\Artist;
+use common\entities\Artist;
 use backend\modules\api\controllers\BaseApiController;
 use yii\data\ActiveDataProvider;
 

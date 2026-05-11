@@ -2,9 +2,9 @@
 
 namespace backend\modules\admin\controllers;
 
-use common\models\Album;
-use common\models\AlbumForm;
-use common\models\AlbumSearch;
+use common\entities\Album;
+use common\forms\AlbumForm;
+use common\search\AlbumSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;

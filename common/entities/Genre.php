@@ -1,11 +1,9 @@
 <?php
 
-namespace common\models;
+namespace common\entities;
 
-use Yii;
 use yii\db\ActiveRecord;
-use common\models\Item;
-use Override;
+use common\entities\Item;
 use yii\helpers\ArrayHelper;
 
 class Genre extends ActiveRecord
