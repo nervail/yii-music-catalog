@@ -30,12 +30,30 @@ class User extends ActiveRecord implements IdentityInterface
     public const STATUS_BANNED = 5;
     public const STATUS_INACTIVE = 9;
     public const STATUS_ACTIVE = 10;
+
+    public const ROLE_USER = 'user';
+    public const ROLE_MODERATOR = 'moderator';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_SUPER_ADMIN = 'superAdmin';
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%users}}';
+    }
+
+    public static function create(string $username, string $email, string $password): self
+    {
+        $user = new static();
+        $user->username = $username;
+        $user->email = $email;
+        $user->setPassword($password);
+        $user->generateAuthKey();
+        $user->generateEmailVerificationToken();
+
+        $user->generateAccessToken();
+        return $user;
     }
 
     public static function getStatusList()
@@ -155,6 +173,11 @@ class User extends ActiveRecord implements IdentityInterface
         return \Yii::$app->authManager->getAssignment('superAdmin', $this->id) !== null;
     }
 
+    public function isVerified()
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
     public function getAssignment()
     {
         return $this->hasOne(AuthAssignment::class, ['user_id' => 'id']);
@@ -205,7 +228,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['access_token' => $token, 'status' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]]);
     }
 
     public function generateAccessToken()

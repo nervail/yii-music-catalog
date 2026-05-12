@@ -18,7 +18,6 @@ class RbacController extends Controller
         // Создание ролей модератора
         $entities = ['Item', 'Artist', 'Genre', 'Album'];
         $actions = ['index', 'view', 'create', 'update', 'delete'];
-        $apiActions = ['index', 'view'];
 
         $moderatorPermissions = [];
         $userPermissions = [];
@@ -31,14 +30,6 @@ class RbacController extends Controller
                 $auth->add($permission);
                 $moderatorPermissions[] = $permission;
             }
-
-            // Для фронта апи
-            foreach ($apiActions as $action) {
-                $name = 'api' . ucfirst($action) . $entity;
-                $permission = $auth->createPermission($name);
-                $auth->add($permission);
-                $userPermissions[] = $permission;
-            } 
         }
 
         // Создание ролей админа

@@ -12,6 +12,7 @@ use common\forms\LoginForm;
 use backend\modules\api\forms\PasswordResetRequestForm;
 use backend\modules\api\forms\ResetPasswordForm;
 use backend\modules\api\forms\SignupForm;
+use backend\modules\api\services\SignupService;
 use common\entities\User;
 use yii\web\ServerErrorHttpException;
 use yii\web\UnauthorizedHttpException;
@@ -60,15 +61,18 @@ class SiteController extends BaseApiController
      */
     public function actionSignup()
     {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post(), '') && $model->signup()) {
+        $form = new SignupForm();
+        if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+            $user = (new SignupService())->signup($form);
+
             return $this->success([
                 'message' => 'Signed up successfully. Please check your email to verify your account.',
+                'access_token' => $user->access_token,
+                'username' => $user->username,
             ]);
         }
 
-        $this->errorIfInvalid($model);
-
+        $this->errorIfInvalid($form);
         throw new BadRequestHttpException('Incorrect data.');
     }
 
@@ -87,7 +91,7 @@ class SiteController extends BaseApiController
             $user = \Yii::$app->user->identity;
 
             $user->generateAccessToken();
-            $user->save(false);
+            $user->save();
 
             return $this->success([
                 'access_token' => $user->access_token,

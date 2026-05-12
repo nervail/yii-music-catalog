@@ -19,7 +19,7 @@ class ApiErrorHandler extends ErrorHandler
             return;
         }
 
-        if (ob_get_length()) {
+        if (ob_get_level() > 0) {
             ob_end_clean();
         }
 
@@ -34,6 +34,15 @@ class ApiErrorHandler extends ErrorHandler
             ? $exception->getMessage()
             : (YII_DEBUG ? $exception->getMessage() : 'Internal server error');
 
+
+        if ($code >= 500) {
+            \Yii::error([
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
+            ], 'api-critical');
+        }
 
         $data = [
             'success' => false,
