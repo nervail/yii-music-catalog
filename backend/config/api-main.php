@@ -1,6 +1,8 @@
 <?php
 
+use backend\modules\api\components\ApiErrorHandler;
 use yii\web\JsonParser;
+use yii\web\Response;
 use yii\web\UrlNormalizer;
 
 $params = array_merge(
@@ -11,47 +13,41 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-backend',
+    'id' => 'app-backend-api',
     'basePath' => dirname(__DIR__),
-    'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
+    'controllerNamespace' => 'backend\modules\api\controllers',
     'modules' => [
-        'admin' => [
-            'class' => 'backend\modules\admin\Module',
-        ],
-    ],
-    'container' => [
-        'definitions' => [
-            \yii\widgets\LinkPager::class => \yii\bootstrap5\LinkPager::class,
+        'api' => [
+            'class' => 'backend\modules\api\Module',
         ],
     ],
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-backend',
+            'csrfParam' => '_csrf-api',
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
+            'enableCsrfValidation' => false,
         ],
         'user' => [
             'identityClass' => 'common\entities\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
-        ],
-        'session' => [
-            // this is the name of the session cookie used for login on the backend
-            'name' => 'advanced-backend',
+            'enableAutoLogin' => false,
+            'enableSession' => false,
+            'loginUrl' => null,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => \yii\log\FileTarget::class,
+                    'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/api.log',
                 ],
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'admin/site/error',
+            'class' => ApiErrorHandler::class,
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -62,15 +58,16 @@ return [
                 'action' => UrlNormalizer::ACTION_REDIRECT_TEMPORARY,
             ],
             'rules' => [
-                '' => 'admin/site/index',
+                [
+                    'class' => \yii\web\GroupUrlRule::class,
+                    'prefix' => 'api',
+                    'rules' => require __DIR__ . '/../../backend/modules/api/rules.php',
+                ],
             ],
         ],
-        'formatter' => [
-            'class' => yii\i18n\Formatter::class,
-            'datetimeFormat' => 'php:d.m.Y H:i',
-            'dateFormat' => 'php:d.m.Y',
-            'timeFormat' => 'php:H:i',
-            'locale' => 'ru-RU',
+        'response' => [
+            'format' => Response::FORMAT_JSON,
+            'charset' => 'UTF-8',
         ],
     ],
     'params' => $params,
