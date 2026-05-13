@@ -2,18 +2,25 @@
 
 namespace backend\modules\api\controllers;
 
-use backend\modules\api\components\ApiResponseTrait;
 use backend\modules\api\exceptions\ValidationException;
 use InvalidArgumentException;
 use yii\base\Model;
 use yii\db\ActiveRecordInterface;
 use yii\rest\Controller;
 use yii\filters\auth\HttpBearerAuth;
+use yii\rest\Serializer;
 use yii\web\NotFoundHttpException;
 
 class BaseApiController extends Controller
 {
-    use ApiResponseTrait;
+    public $serializer = [
+        'class' => Serializer::class,
+        'expandParam' => 'expand',
+        'fieldsParam' => 'fields',
+        
+        // Если надо помещать коллекцию в обертку, то указать имя ключа, например 'items',
+        'collectionEnvelope' => null,
+    ];
 
     public function behaviors()
     {
@@ -23,6 +30,15 @@ class BaseApiController extends Controller
             'class' => HttpBearerAuth::class,
         ];
         return $behaviors;
+    }
+
+    protected function success($data = [], $code = 200)
+    {
+        \Yii::$app->response->statusCode = $code;
+        return [
+            'success' => true,
+            'data' => $data,
+        ];
     }
 
     public function findModel(int $id, string $modelClass)

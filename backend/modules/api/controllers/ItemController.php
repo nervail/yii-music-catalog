@@ -2,12 +2,18 @@
 
 namespace backend\modules\api\controllers;
 
-use common\entities\Item;
 use backend\modules\api\controllers\BaseApiController;
-use yii\data\ActiveDataProvider;
+use common\entities\Item;
+use common\search\ItemSearch;
 
 class ItemController extends BaseApiController
 {
+    public function init()
+    {
+        parent::init();
+        $this->serializer['collectionEnvelope'] = 'items';
+    }
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -22,14 +28,10 @@ class ItemController extends BaseApiController
 
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Item::find(),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+        $searchModel = new ItemSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, '');
 
-        return $this->success($this->prepareResource($dataProvider, 'items'));
+        return $this->success($dataProvider);
     }
 
     public function actionView(int $id)

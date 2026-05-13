@@ -7,18 +7,23 @@ use yii\data\ActiveDataProvider;
 
 class UserSearch extends User
 {
+    const PAGE_SIZE = 10;
+    const PAGE_SIZE_LIMIT = [1, 50];
+    
     public $role;
 
     public function rules()
     {
         return [
-            [['id', 'status'], 'integer'],
+            [['username', 'email'], 'trim'],
             [['username', 'email'], 'string'],
+
+            [['id', 'status'], 'integer'],
             [['role'], 'safe'],
         ];
     }
 
-    public function search($params)
+    public function search($params, $formName = null): ActiveDataProvider
     {
         $query = User::find()->alias('u');
 
@@ -36,7 +41,9 @@ class UserSearch extends User
 
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
-                'pageSize' => 10
+                'defaultPageSize' => self::PAGE_SIZE, 
+                'pageSizeLimit' => self::PAGE_SIZE_LIMIT, 
+                'pageSizeParam' => 'per-page',
             ],
             'query' => $query,
             'sort' => [
@@ -56,7 +63,12 @@ class UserSearch extends User
             ],
         ]);
 
-        if (!($this->load($params) && $this->validate())) {
+        if (!$this->load($params, $formName)) {
+            return $dataProvider;
+        }
+
+        if (!$this->validate()) {
+            $query->where('0=1');
             return $dataProvider;
         }
 

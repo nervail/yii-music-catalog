@@ -2,7 +2,6 @@
 
 namespace common\search;
 
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\entities\Album;
 
@@ -11,24 +10,21 @@ use common\entities\Album;
  */
 class AlbumSearch extends Album
 {
+    const PAGE_SIZE = 10;
+    const PAGE_SIZE_LIMIT = [1, 50];
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'artist_id'], 'integer'],
-            [['name', 'release_date'], 'safe'],
-        ];
-    }
+            [['name'], 'trim'],
+            [['name'], 'string'],
 
-    /**
-     * {@inheritdoc}
-     */
-    public function scenarios()
-    {
-        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+            [['id', 'artist_id'], 'integer'],
+            [['release_date'], 'safe'],
+        ];
     }
 
     /**
@@ -39,9 +35,9 @@ class AlbumSearch extends Album
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search($params, $formName = null): ActiveDataProvider
     {
-        $query = Album::find()->with('artist');
+        $query = Album::find()->with('artist', 'items');
 
         // add conditions that should always apply here
 
@@ -51,15 +47,19 @@ class AlbumSearch extends Album
                 'defaultOrder' => ['id' => SORT_DESC],
             ],
             'pagination' => [
-                'pageSize' => 10,
+                'defaultPageSize' => self::PAGE_SIZE, 
+                'pageSizeLimit' => self::PAGE_SIZE_LIMIT, 
+                'pageSizeParam' => 'per-page',
             ],
         ]);
 
-        $this->load($params, $formName);
+        if (!$this->load($params, $formName)) {
+            return $dataProvider;
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
 

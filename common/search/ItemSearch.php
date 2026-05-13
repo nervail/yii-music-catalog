@@ -7,32 +7,47 @@ use yii\data\ActiveDataProvider;
 
 class ItemSearch extends Item
 {
+    const PAGE_SIZE = 10;
+    const PAGE_SIZE_LIMIT = [1, 50];
+    
     public $genre_ids = [];
 
     public function rules()
     {
         return [
+            [['name', 'description'], 'trim'],
             [['name', 'description'], 'string'],
+            
             [['id', 'artist_id', 'status'], 'integer'],
             ['genre_ids', 'each', 'rule' => ['integer']],
         ];
     }
 
-    public function search($params)
+    public function search($params, $formName = null): ActiveDataProvider
     {
-        $query = Item::find()->with(['artist', 'genres']);
+        $query = Item::find()->with(['artist', 'genres', 'album']);
         $query->joinWith('genres', false);
         
         $query->distinct();
 
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
-                'pageSize' => 10
+                'defaultPageSize' => self::PAGE_SIZE, 
+                'pageSizeLimit' => self::PAGE_SIZE_LIMIT, 
+                'pageSizeParam' => 'per-page',
             ],
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
         ]);
 
-        if (!($this->load($params) && $this->validate())) {
+        if (!$this->load($params, $formName)) {
+            return $dataProvider;
+        }
+
+        if (!$this->validate()) {
+            $query->where('0=1');
             return $dataProvider;
         }
 

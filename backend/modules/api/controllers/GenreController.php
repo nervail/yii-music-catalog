@@ -4,10 +4,16 @@ namespace backend\modules\api\controllers;
     
 use common\entities\Genre;
 use backend\modules\api\controllers\BaseApiController;
-use yii\data\ActiveDataProvider;
+use common\search\GenreSearch;
 
 class GenreController extends BaseApiController
 {
+    public function init()
+    {
+        parent::init();
+        $this->serializer['collectionEnvelope'] = 'genres';
+    }
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -22,14 +28,10 @@ class GenreController extends BaseApiController
 
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Genre::find(),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+        $searchModel = new GenreSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, '');
 
-        return $this->success($this->prepareResource($dataProvider, 'genres'));
+        return $this->success($dataProvider);
     }
 
         public function actionView(int $id)
