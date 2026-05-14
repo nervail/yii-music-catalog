@@ -12,7 +12,7 @@ class m260225_063042_create_subscriptions_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%subscription}}', [
+        $this->createTable('{{%subscriptions}}', [
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'artist_id' => $this->integer()->notNull(),
@@ -21,7 +21,7 @@ class m260225_063042_create_subscriptions_table extends Migration
 
         $this->addForeignKey(
             'fk-subscription-user',
-            '{{%subscription}}',
+            '{{%subscriptions}}',
             'user_id',
             '{{%users}}',
             'id',
@@ -30,7 +30,7 @@ class m260225_063042_create_subscriptions_table extends Migration
 
         $this->addForeignKey(
             'fk-subscription-artist',
-            '{{%subscription}}',
+            '{{%subscriptions}}',
             'artist_id',
             '{{%artists}}',
             'id',
@@ -40,7 +40,7 @@ class m260225_063042_create_subscriptions_table extends Migration
         // Уникальный индекс, чтобы нельзя было подписаться дважды
         $this->createIndex(
             'idx-subscription-user-artist',
-            '{{%subscription}}',
+            '{{%subscriptions}}',
             ['user_id', 'artist_id'],
             true
         );
@@ -51,9 +51,9 @@ class m260225_063042_create_subscriptions_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-subscription-user', 'subscriptions');
-        $this->dropForeignKey('fk-subscription-artist', 'subscriptions');
-        $this->dropIndex('idx-subscription-user-artist', 'subscriptions');
+        $this->dropForeignKey('fk-subscription-user', '{{%subscriptions}}');
+        $this->dropForeignKey('fk-subscription-artist', '{{%subscriptions}}');
+        $this->dropIndex('idx-subscription-user-artist', '{{%subscriptions}}');
         $this->dropTable('{{%subscriptions}}');
     }
 }

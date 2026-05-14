@@ -18,4 +18,7 @@ return [
 
     'GET artists' => 'artist/index',
     'GET artists/<id:\d+>' => 'artist/view',
+
+    'POST subscribe/<id:\d+>' => 'subscription/subscribe',
+    'POST unsubscribe/<id:\d+>' => 'subscription/unsubscribe',
 ];
