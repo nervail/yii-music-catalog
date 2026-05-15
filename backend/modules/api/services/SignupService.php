@@ -45,11 +45,17 @@ class SignupService
 
     private function sendEmail(User $user)
     {
+        $frontendUrl = \Yii::$app->params['frontendUrl'];
+        $verifyLink = $frontendUrl . '/verify-email?token=' . $user->verification_token;
+
         return \Yii::$app
             ->mailer
             ->compose(
                 ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
+                [
+                    'user' => $user,
+                    'verifyLink' => $verifyLink,
+                ]
             )
             ->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
             ->setTo($user->email)

@@ -2,8 +2,7 @@
 
 /** @var yii\web\View $this */
 /** @var common\entities\User $user */
-
-$verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['site/verify-email', 'token' => $user->verification_token]);
+/** @var string $verifyLink */
 ?>
 Hello <?= $user->username ?>,
 
