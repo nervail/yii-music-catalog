@@ -16,7 +16,7 @@ class RbacController extends Controller
         $auth->removeAll();
 
         // Создание ролей модератора
-        $entities = ['Item', 'Artist', 'Genre', 'Album'];
+        $entities = ['Item', 'Artist', 'Genre', 'Album', 'Subscription'];
         $actions = ['index', 'view', 'create', 'update', 'delete'];
 
         $moderatorPermissions = [];
@@ -25,6 +25,11 @@ class RbacController extends Controller
         foreach ($entities as $entity) {
             // Для бекенда
             foreach ($actions as $action) {
+                // Исключение: для подписок нам не нужны create и update в админке
+                if ($entity === 'Subscription' && in_array($action, ['create', 'update'])) {
+                    continue;
+                }
+
                 $name = $action . $entity;
                 $permission = $auth->createPermission($name);
                 $auth->add($permission);
