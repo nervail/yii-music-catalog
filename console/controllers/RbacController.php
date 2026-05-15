@@ -15,16 +15,25 @@ class RbacController extends Controller
         $auth = Yii::$app->authManager;
         $auth->removeAll();
 
-        // Создание ролей модератора
-        $entities = ['Item', 'Artist', 'Genre', 'Album', 'Subscription'];
-        $actions = ['index', 'view', 'create', 'update', 'delete'];
+        // Создание разрешений модератора
+        $backendEntities = ['Item', 'Artist', 'Genre', 'Album', 'Subscription'];
+        $backendActions = ['index', 'view', 'create', 'update', 'delete'];
 
         $moderatorPermissions = [];
-        $userPermissions = [];
 
-        foreach ($entities as $entity) {
-            // Для бекенда
-            foreach ($actions as $action) {
+        // Создание разрешения для апи юзера
+        $apiUserPermissions = [];
+
+        $subscribePermission = $auth->createPermission('subscribeArtist');
+        $unsubscribePermission = $auth->createPermission('unsubscribeArtist');
+        $auth->add($subscribePermission);
+        $auth->add($unsubscribePermission);
+        $apiUserPermissions[] = $subscribePermission;
+        $apiUserPermissions[] = $unsubscribePermission;
+
+        foreach ($backendEntities as $entity) {
+            // Создание разрешения для админки
+            foreach ($backendActions as $action) {
                 // Исключение: для подписок нам не нужны create и update в админке
                 if ($entity === 'Subscription' && in_array($action, ['create', 'update'])) {
                     continue;
@@ -72,7 +81,7 @@ class RbacController extends Controller
             $auth->addChild($admin, $perm);
         }
 
-        foreach ($userPermissions as $perm) {
+        foreach ($apiUserPermissions as $perm) {
             $auth->addChild($user, $perm);
         }
 
