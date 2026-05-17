@@ -25,6 +25,9 @@ use yii\helpers\ArrayHelper;
 class Album extends \yii\db\ActiveRecord
 {
 
+    public const STATUS_DRAFT = 0;
+    public const STATUS_PUBLISHED = 1;
+    public const STATUS_ARCHIVED = 2;
 
     /**
      * {@inheritdoc}
@@ -47,12 +50,15 @@ class Album extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['release_date', 'image_url'], 'default', 'value' => null],
+            [['image_url'], 'default', 'value' => null],
             [['name', 'artist_id'], 'required'],
             [['artist_id'], 'integer'],
-            [['release_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => Artist::class, 'targetAttribute' => ['artist_id' => 'id']],
+            [['status'], 'integer'],
+            [['status'], 'default', 'value' => self::STATUS_DRAFT],
+            [['status'], 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_PUBLISHED, self::STATUS_ARCHIVED]],
+            [['published_at'], 'integer'],
         ];
     }
 
@@ -61,6 +67,8 @@ class Album extends \yii\db\ActiveRecord
         return [
             'id',
             'name',
+            'status',
+            'published_at',
         ];
     }
 
