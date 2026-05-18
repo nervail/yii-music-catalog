@@ -21,6 +21,10 @@ class RbacController extends Controller
 
         $moderatorPermissions = [];
 
+        $publishAlbumPermission = $auth->createPermission('publishAlbum');
+        $auth->add($publishAlbumPermission);
+        $moderatorPermissions[] = $publishAlbumPermission;
+
         // Создание разрешения для апи юзера
         $apiUserPermissions = [];
 

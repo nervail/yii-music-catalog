@@ -55,4 +55,9 @@ class Artist extends ActiveRecord
     {
         return $this->hasMany(Album::class, ['artist_id' =>'id']);
     }
+
+    public function getSubscriptions()
+    {
+        return $this->hasMany(Subscription::class, ['artist_id' => 'id']);
+    }
 }

@@ -34,6 +34,21 @@ use yii\widgets\DetailView;
                             'method' => 'post',
                         ],
                     ]) ?>
+                    <?php if ($model->status !== $model::STATUS_PUBLISHED): ?>
+
+                        <?= Html::a(
+                            'Publish',
+                            ['publish', 'id' => $model->id],
+                            [
+                                'class' => 'btn btn-sm btn-success',
+                                'data' => [
+                                    'method' => 'post',
+                                    'confirm' => 'Publish this album?',
+                                ],
+                            ]
+                        ) ?>
+
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -59,6 +74,34 @@ use yii\widgets\DetailView;
                                 return Html::a($safeName, ['artist/view', 'id' => $model->artist_id], [
                                     'class' => 'text-primary font-weight-bold'
                                 ]);
+                            },
+                        ],
+                        [
+                            'label' => 'Status',
+                            'format' => 'raw',
+                            'value' => function($model) {
+
+                                $classes = [
+                                    $model::STATUS_DRAFT => 'badge badge-secondary',
+                                    $model::STATUS_PUBLISHED => 'badge badge-success',
+                                    $model::STATUS_ARCHIVED => 'badge badge-dark',
+                                ];
+
+                                $class = $classes[$model->status] ?? 'badge badge-light';
+
+                                return Html::tag(
+                                    'span',
+                                    Html::encode($model->getStatusLabel()),
+                                    ['class' => $class]
+                                );
+                            },
+                        ],
+                        [
+                            'label' => 'published_at',
+                            'value' => function($model) {
+                                return $model->published_at
+                                    ? \Yii::$app->formatter->asDatetime($model->published_at)
+                                    : 'Not published';
                             },
                         ],
                         [

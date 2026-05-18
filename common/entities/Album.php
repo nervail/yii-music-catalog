@@ -77,6 +77,33 @@ class Album extends \yii\db\ActiveRecord
         return ['artist', 'items'];
     }
 
+    public function archive(): bool
+    {
+        $this->status = self::STATUS_ARCHIVED;
+        return $this->save(false, ['status']);
+    }
+
+    public function publish(): bool
+    {
+        $this->status = self::STATUS_PUBLISHED;
+        $this->published_at = time();
+        return $this->save(false, ['status', 'published_at']);
+    }
+
+    public static function getStatuses(): array
+    {
+        return [
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_PUBLISHED => 'Published',
+            self::STATUS_ARCHIVED => 'Archived',
+        ];
+    }
+
+    public function getStatusLabel(): string
+    {
+        return self::getStatuses()[$this->status] ?? 'Unknown';
+    }
+    
     /**
      * Gets query for [[Artist]].
      *

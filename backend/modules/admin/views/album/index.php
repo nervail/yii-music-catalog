@@ -86,8 +86,32 @@ $this->title = 'Albums Catalog';
                             }
                         ],
                         [
-                            'attribute' => 'release_date',
-                            'format' => ['date', 'medium'],
+                            'label' => 'Status',
+                            'format' => 'raw',
+                            'value' => function($model) {
+
+                                $classes = [
+                                    $model::STATUS_DRAFT => 'badge badge-secondary',
+                                    $model::STATUS_PUBLISHED => 'badge badge-success',
+                                    $model::STATUS_ARCHIVED => 'badge badge-dark',
+                                ];
+
+                                $class = $classes[$model->status] ?? 'badge badge-light';
+
+                                return Html::tag(
+                                    'span',
+                                    Html::encode($model->getStatusLabel()),
+                                    ['class' => $class]
+                                );
+                            },
+                        ],
+                        [
+                            'label' => 'Published at',
+                            'value' => function($model) {
+                                return $model->published_at
+                                    ? \Yii::$app->formatter->asDatetime($model->published_at)
+                                    : 'Not published';
+                            },
                         ],
                         [
                             'class' => 'yii\grid\ActionColumn',

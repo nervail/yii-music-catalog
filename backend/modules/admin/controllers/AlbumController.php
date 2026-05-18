@@ -5,12 +5,14 @@ namespace backend\modules\admin\controllers;
 use common\entities\Album;
 use common\forms\AlbumForm;
 use common\search\AlbumSearch;
+use common\services\AlbumPublishService;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -58,6 +60,11 @@ class AlbumController extends Controller
                     ],
                     [
                         'allow' => true,
+                        'actions' => ['publish'],
+                        'roles' => ['publishAlbum'],
+                    ],
+                    [
+                        'allow' => true,
                         'actions' => ['get-albums'],
                         'roles' => ['@'],
                     ],
@@ -74,6 +81,7 @@ class AlbumController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'publish' => ['POST'],
                 ],
             ],
         ];
@@ -175,21 +183,40 @@ class AlbumController extends Controller
     }
 
     /**
-     * Deletes an existing Album model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Archives an existing Album model.
+     * If archiving is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id)
     {
-        if ($this->findModel($id)->delete()) {
-            \Yii::$app->session->setFlash('success', 'Album deleted');
+        if ($this->findModel($id)->archive()) {
+            \Yii::$app->session->setFlash('success', 'Album archived');
         } else {
-            \Yii::$app->session->setFlash('error', 'Error deleting album');
+            \Yii::$app->session->setFlash('error', 'Error archiving album');
         }
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Publishes an existing Album model.
+     * If publishing is successful, the browser will be redirected to the 'view' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionPublish(int $id)
+    {
+        $albumPublishService = new AlbumPublishService();
+        $album = $this->findModel($id);
+
+        if (!$albumPublishService->publish($album)) {
+            throw new ServerErrorHttpException();
+        }
+
+        return $this->redirect(['view', 'id' => $album->id]);
     }
 
     /**
