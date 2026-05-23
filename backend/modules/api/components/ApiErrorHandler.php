@@ -46,14 +46,17 @@ class ApiErrorHandler extends ErrorHandler
 
         $data = [
             'success' => false,
-            'error' => [
-                'message' => $message,
-                'code' => $code,
-            ],
+            'data' => null,
+            'errors' => [],
         ];
 
         if ($exception instanceof ValidationException) {
-            $data['error']['validation_errors'] = $exception->errors;
+            $data['errors'] = $exception->errors;
+        } else {
+            $data['errors'] = [
+                'system' => [$message],
+                'code' => $exception->getCode() ?: $code,
+            ];
         }
 
         if (YII_DEBUG) {
@@ -67,7 +70,6 @@ class ApiErrorHandler extends ErrorHandler
 
         $response->statusCode = $code;
         $response->data = $data;
-
         $response->send();
         return;
     }

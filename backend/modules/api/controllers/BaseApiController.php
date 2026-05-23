@@ -3,13 +3,13 @@
 namespace backend\modules\api\controllers;
 
 use backend\modules\api\exceptions\ValidationException;
-use InvalidArgumentException;
 use yii\base\Model;
 use yii\db\ActiveRecordInterface;
 use yii\rest\Controller;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Serializer;
 use yii\web\NotFoundHttpException;
+use yii\web\UnprocessableEntityHttpException;
 
 class BaseApiController extends Controller
 {
@@ -38,13 +38,15 @@ class BaseApiController extends Controller
         return [
             'success' => true,
             'data' => $data,
+            'errors' => null,
         ];
     }
 
     public function findModel(int $id, string $modelClass)
     {
         if (!is_subclass_of($modelClass, ActiveRecordInterface::class)) {
-            throw new InvalidArgumentException("Class $modelClass must implement ActiveRecord interface");
+            \Yii::error("Class $modelClass must implement ActiveRecord interface");
+            throw new UnprocessableEntityHttpException("Error while handling request");
         }
 
         if (($model = $modelClass::findOne($id)) !== null) {
@@ -57,7 +59,8 @@ class BaseApiController extends Controller
     public function errorIfInvalid($model)
     {
         if (!$model instanceof Model) {
-            throw new InvalidArgumentException("Argument must be an instance of yii\\base\\Model");
+            \Yii::error('Argument must be an instance of yii\\base\\Model');
+            throw new UnprocessableEntityHttpException("Error while handling request");
         }
         
         if ($model->hasErrors()) {
