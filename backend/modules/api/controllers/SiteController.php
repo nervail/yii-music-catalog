@@ -2,26 +2,39 @@
 
 namespace backend\modules\api\controllers;
 
-use backend\modules\api\forms\ResendVerificationEmailForm;
-use backend\modules\api\forms\VerifyEmailForm;
-use Yii;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
 use backend\modules\api\controllers\BaseApiController;
-use common\forms\LoginForm;
+use backend\modules\api\forms\LoginForm;
 use backend\modules\api\forms\PasswordResetRequestForm;
+use backend\modules\api\forms\ResendVerificationEmailForm;
 use backend\modules\api\forms\ResetPasswordForm;
 use backend\modules\api\forms\SignupForm;
+use backend\modules\api\forms\VerifyEmailForm;
+use backend\modules\api\services\AuthService;
 use backend\modules\api\services\SignupService;
+use backend\modules\api\services\VerifyService;
 use common\entities\User;
-use yii\web\ServerErrorHttpException;
+use Yii;
+use yii\web\BadRequestHttpException;
 use yii\web\UnauthorizedHttpException;
+use yii\web\UnprocessableEntityHttpException;
 
 /**
  * Site controller
  */
 class SiteController extends BaseApiController
 {
+
+    public function __construct(
+        $id, 
+        $module, 
+        private SignupService $signupService, 
+        private AuthService $authService,
+        private VerifyService $verifyService,
+        $config = []
+    ) {
+        parent::__construct($id, $module, $config);
+    }
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -32,6 +45,7 @@ class SiteController extends BaseApiController
             'login', 
             'request-password-reset', 
             'reset-password', 
+            'check-reset-token', 
             'verify-email',
             'resend-verification-email',
         ]; 
@@ -63,7 +77,7 @@ class SiteController extends BaseApiController
     {
         $form = new SignupForm();
         if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
-            $user = (new SignupService())->signup($form);
+            $user = $this->signupService->signup($form);
 
             return $this->success([
                 'message' => 'Signed up successfully. Please check your email to verify your account.',
@@ -73,7 +87,6 @@ class SiteController extends BaseApiController
         }
 
         $this->errorIfInvalid($form);
-        throw new BadRequestHttpException('Incorrect data.');
     }
 
     /**
@@ -83,15 +96,11 @@ class SiteController extends BaseApiController
      */
     public function actionLogin()
     {
-        $model = new LoginForm();
+        $form = new LoginForm();
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->login()) {
-
-            /** @var User $user */
-            $user = \Yii::$app->user->identity;
-
-            $user->generateAccessToken();
-            $user->save();
+        if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+            
+            $user = $this->authService->auth($form);
 
             return $this->success([
                 'access_token' => $user->access_token,
@@ -99,7 +108,7 @@ class SiteController extends BaseApiController
             ]);
         }
 
-        throw new UnauthorizedHttpException('Incorrect username or password.');
+        $this->errorIfInvalid($form);
     }
 
     public function actionLogout()
@@ -107,14 +116,7 @@ class SiteController extends BaseApiController
         /** @var User $user */
         $user = Yii::$app->user->identity;
 
-        if (!$user) {
-            throw new UnauthorizedHttpException('Not logged in.');
-        }
-
-        $user->access_token = null;
-        $user->save(false);
-
-        Yii::$app->user->logout();
+        $this->authService->logout($user);
 
         return $this->success([
             'message' => 'Logged out successfully.',
@@ -123,73 +125,71 @@ class SiteController extends BaseApiController
 
     public function actionRequestPasswordReset()
     {
-        $model = new PasswordResetRequestForm();
+        $form = new PasswordResetRequestForm();
 
-        if (!$model->load(Yii::$app->request->post(), '')) {
-            throw new BadRequestHttpException('No data provided.');
+        if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+            
+            $this->authService->requestPasswordReset($form);
+
+            return $this->success([
+                'message' => 'If such email exists, we have sent a mail.'
+            ]);
         }
 
-        if (!$model->validate()) {
-            $this->errorIfInvalid($model);
-            throw new BadRequestHttpException('Incorrect data.');
-        }
-
-        if (!$model->sendEmail()) {
-            throw new ServerErrorHttpException('Failed to send email.');
-        }
-
-        return $this->success([
-            'message' => 'Instructions sent to your email.'
-        ]);
+        $this->errorIfInvalid($form);
     }
+
     /**
      * Resets password.
      *
-     * @param string $token
      * @return mixed
-     * @throws BadRequestHttpException
+     * @throws UnauthorizedHttpException
      */
-    public function actionResetPassword($token)
+    public function actionResetPassword()
     {
-        try {
-            $model = new ResetPasswordForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
+        $form = new ResetPasswordForm();
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->validate() && $model->resetPassword()) {
+        if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+            $this->authService->passwordReset($form);
+
             return $this->success([
                 'message' => 'New password saved.',
             ]);
         }
 
-        $this->errorIfInvalid($model);
+        $this->errorIfInvalid($form);
+    }
 
-        throw new BadRequestHttpException('Incorrect data.');
+    public function actionCheckResetToken()
+    {
+        $token = \Yii::$app->request->post('token');
+
+        if (!User::isPasswordResetTokenValid($token)) {
+            throw new UnprocessableEntityHttpException('Token expired');
+        }
+
+        return $this->success(['valid' => true]);
     }
 
     /**
      * Verify email address
      *
-     * @param string $token
      * @throws BadRequestHttpException
      * @return yii\web\Response
      */
-    public function actionVerifyEmail($token)
+    public function actionVerifyEmail()
     {
-        try {
-            $model = new VerifyEmailForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-
-        if ($model->verifyEmail()) {
+        $form = new VerifyEmailForm();
+        
+        if ($form->load(\Yii::$app->request->post(), '') && $form->validate()) {
+            $this->verifyService->verifyEmail($form);
+            
             return $this->success([
                 'message' => 'Email verified!'
             ]);
         }
 
-        throw new BadRequestHttpException('Failed to verify email.');
+        $this->errorIfInvalid($form);
     }
 
     /**
@@ -199,18 +199,15 @@ class SiteController extends BaseApiController
      */
     public function actionResendVerificationEmail()
     {
-        $model = new ResendVerificationEmailForm();
-        if ($model->load(Yii::$app->request->post(), '') && $model->validate()) {
-            if ($model->sendEmail()) {
-                return $this->success([
-                    'message' => 'Check your email for further instructions.'
-                ]);
-            }
-
-            throw new BadRequestHttpException('Sorry, we are unable to resend verification email for the provided email address.');
+        $form = new ResendVerificationEmailForm();
+        if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+            $this->verifyService->resendVerificationEmail($form);
+            
+            return $this->success([
+                'message' => 'If such email exists, we have sent a mail.'
+            ]);
         }
 
-        $this->errorIfInvalid($model);
-        throw new BadRequestHttpException('Incorrect data.');
+        $this->errorIfInvalid($form);
     }
 }

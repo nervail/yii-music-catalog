@@ -2,12 +2,10 @@
 
 namespace backend\modules\api\controllers;
 
-use backend\modules\api\components\VerifiedEmailFilter;
 use backend\modules\api\controllers\BaseApiController;
 use common\services\SubscriptionService;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\ForbiddenHttpException;
 
 class SubscriptionController extends BaseApiController
 {
@@ -27,10 +25,6 @@ class SubscriptionController extends BaseApiController
                 'subscribe'  => ['post'],
                 'unsubscribe'   => ['post'],
             ],
-        ];
-
-        $behaviors['emailVerified'] = [
-            'class' => VerifiedEmailFilter::class,
         ];
 
         $behaviors['access'] = [

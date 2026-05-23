@@ -48,6 +48,7 @@ class User extends ActiveRecord implements IdentityInterface
         $user = new static();
         $user->username = $username;
         $user->email = $email;
+        $user->status = self::STATUS_INACTIVE;
         $user->setPassword($password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
@@ -228,7 +229,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return static::findOne(['access_token' => $token, 'status' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]]);
+        return static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
     }
 
     public function generateAccessToken()
@@ -294,6 +295,29 @@ class User extends ActiveRecord implements IdentityInterface
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
+    }
+
+    /**
+     * Finds out if password reset token is valid
+     *
+     * @param string $token password reset token
+     * @return bool
+     */
+    public static function isEmailVerifyTokenValid($token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+
+        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $expire = Yii::$app->params['user.emailVerifyTokenExpire'];
+        return $timestamp + $expire >= time();
+    }
+
+    public function verifyEmail(): void
+    {
+        $this->status = User::STATUS_ACTIVE;
+        $this->verification_token = null;
     }
 
     /**

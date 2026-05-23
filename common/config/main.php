@@ -1,11 +1,18 @@
 <?php
 
+use common\repositories\UserRepository;
+
 return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'container' => [
+        'singletons' => [
+            UserRepository::class => UserRepository::class,
+        ],
+    ],
     'components' => [
         'cache' => [
             'class' => \yii\caching\FileCache::class,

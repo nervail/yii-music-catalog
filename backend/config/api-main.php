@@ -1,6 +1,10 @@
 <?php
 
 use backend\modules\api\components\ApiErrorHandler;
+use backend\modules\api\services\AuthService;
+use backend\modules\api\services\SignupService;
+use backend\modules\api\services\VerifyService;
+use common\repositories\UserRepository;
 use yii\web\JsonParser;
 use yii\web\Response;
 use yii\web\UrlNormalizer;
@@ -15,11 +19,41 @@ $params = array_merge(
 return [
     'id' => 'app-backend-api',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+    ],
     'controllerNamespace' => 'backend\modules\api\controllers',
     'modules' => [
         'api' => [
             'class' => 'backend\modules\api\Module',
+        ],
+    ],
+    'container' => [
+        'singletons' => [
+            SignupService::class => function ($container) {
+                return new SignupService(
+                    \Yii::$app->db,
+                    \Yii::$app->authManager,
+                    $container->get(UserRepository::class),
+                    $container->get(VerifyService::class),
+                );
+            },
+
+            AuthService::class => function ($container) {
+                return new AuthService(
+                    $container->get(UserRepository::class),
+                    \Yii::$app->mailer,
+                    \Yii::$app->params['frontendUrl']
+                );
+            },
+
+            VerifyService::class => function ($container) {
+                return new VerifyService(
+                    $container->get(UserRepository::class),
+                    \Yii::$app->mailer,
+                    \Yii::$app->params['frontendUrl']
+                );
+            },
         ],
     ],
     'components' => [

@@ -2,64 +2,57 @@
 
 namespace backend\modules\api\services;
 
+use backend\modules\api\exceptions\RetryLaterException;
 use backend\modules\api\forms\SignupForm;
 use common\entities\User;
-use yii\web\ServerErrorHttpException;
+use common\repositories\UserRepository;
+use yii\db\Connection;
+use yii\rbac\ManagerInterface;
 
 class SignupService
 {
+    public function __construct(
+        private Connection $db,
+        private ManagerInterface $authManager,
+        private UserRepository $users,
+        private VerifyService $verifyService
+    ) {
+    }
+
     public function signup(SignupForm $form): User
     {
         $user = User::create($form->username, $form->email, $form->password);
 
-
-        $transaction = \Yii::$app->db->beginTransaction();
+        $transaction = $this->db->beginTransaction();
         try {
-            if (!$user->save()) {
-                \Yii::error('User save error: ' . json_encode($user->getErrors()), 'api-registration');
-                throw new ServerErrorHttpException('Saving error.');
-            }
+            $this->users->save($user);
     
-            $auth = \Yii::$app->authManager;
-            $role = $auth->getRole(User::ROLE_USER);
-    
-            if ($role) {
-                $auth->assign($role, $user->id);
-            } else {
-                \Yii::error('User save error: ' . 'Default role not found', 'api-registration');
-                throw new ServerErrorHttpException();
+            $role = $this->authManager->getRole(User::ROLE_USER);
+
+            if (!$role) {
+                \Yii::error('User save error: Default role not found', 'api-registration');
+                throw new RetryLaterException(RetryLaterException::CODE_REG_UNAVAILABLE);
             }
+
+            $this->authManager->assign($role, $user->id);
             
-            if (!$this->sendEmail($user)) {
-                throw new ServerErrorHttpException('Sending email error.');
+            if (!$this->verifyService->sendVerificationEmail($user)) {
+                \Yii::error("Email sending failed for user ID: {$user->id}", 'api-registration');
+                throw new RetryLaterException(RetryLaterException::CODE_MAIL_FAILED);
             }
 
             $transaction->commit();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transaction->rollBack();
-            throw $e;
+
+            if ($e instanceof \yii\web\HttpException) {
+                throw $e;
+            }
+
+            \Yii::error('Критический сбой регистрации: ' . $e->getMessage(), 'api-registration');
+            throw new RetryLaterException(RetryLaterException::CODE_SYSTEM_ERROR, $e);
         }
 
         return $user;
-    }
-
-    private function sendEmail(User $user)
-    {
-        $frontendUrl = \Yii::$app->params['frontendUrl'];
-        $verifyLink = $frontendUrl . '/verify-email?token=' . $user->verification_token;
-
-        return \Yii::$app
-            ->mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                [
-                    'user' => $user,
-                    'verifyLink' => $verifyLink,
-                ]
-            )
-            ->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
-            ->setTo($user->email)
-            ->setSubject('Account registration at ' . \Yii::$app->name)
-            ->send();
     }
 }
