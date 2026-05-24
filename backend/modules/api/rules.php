@@ -1,16 +1,17 @@
 <?php
 
 return [
-    'POST login' => 'site/login',
-    'POST signup' => 'site/signup',
-    'POST logout' => 'site/logout',
+    'POST signup' => 'signup/index',
 
-    'POST request-password-reset' => 'site/request-password-reset',
-    'POST reset-password' => 'site/reset-password',
-    'POST check-reset-token' => 'site/check-reset-token',
+    'POST login' => 'auth/login',
+    'POST logout' => 'auth/logout',
 
-    'POST verify-email' => 'site/verify-email',
-    'POST resend-verification-email' => 'site/resend-verification-email',
+    'POST request-password-reset' => 'reset/request-password-reset',
+    'POST reset-password' => 'reset/reset-password',
+    'POST check-reset-token' => 'reset/check-reset-token',
+
+    'POST verify-email' => 'verify/verify-email',
+    'POST resend-verification-email' => 'verify/resend-verification-email',
 
     'GET /' => 'site/index',
 

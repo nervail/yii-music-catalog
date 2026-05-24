@@ -2,6 +2,7 @@
 
 use backend\modules\api\components\ApiErrorHandler;
 use backend\modules\api\services\AuthService;
+use backend\modules\api\services\PasswordResetService;
 use backend\modules\api\services\SignupService;
 use backend\modules\api\services\VerifyService;
 use common\repositories\UserRepository;
@@ -41,6 +42,14 @@ return [
 
             AuthService::class => function ($container) {
                 return new AuthService(
+                    $container->get(UserRepository::class),
+                    \Yii::$app->mailer,
+                    \Yii::$app->params['frontendUrl']
+                );
+            },
+
+            PasswordResetService::class => function ($container) {
+                return new PasswordResetService(
                     $container->get(UserRepository::class),
                     \Yii::$app->mailer,
                     \Yii::$app->params['frontendUrl']
