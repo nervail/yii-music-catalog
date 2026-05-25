@@ -3,16 +3,17 @@
 namespace backend\modules\admin\controllers;
 
 use common\entities\Album;
+use common\exceptions\ALbumPublishedException;
 use common\forms\AlbumForm;
 use common\search\AlbumSearch;
 use common\services\AlbumPublishService;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -21,8 +22,18 @@ use yii\web\UploadedFile;
 class AlbumController extends Controller
 {
     public const PAGE_SIZE = 20;
-
     public $layout = 'admin';
+
+    
+    public function __construct(
+        $id, 
+        $module, 
+        private AlbumPublishService $albumPublishService,
+        $config = []
+        )
+    {
+        parent::__construct($id, $module, $config);
+    }
 
     /**
      * @inheritDoc
@@ -209,11 +220,12 @@ class AlbumController extends Controller
      */
     public function actionPublish(int $id)
     {
-        $albumPublishService = new AlbumPublishService();
         $album = $this->findModel($id);
 
-        if (!$albumPublishService->publish($album)) {
-            throw new ServerErrorHttpException();
+        try {
+            $this->albumPublishService->publish($album);
+        } catch (ALbumPublishedException $e) {
+            throw new BadRequestHttpException($e->getMessage());
         }
 
         return $this->redirect(['view', 'id' => $album->id]);

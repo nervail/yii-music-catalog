@@ -83,13 +83,6 @@ class Album extends \yii\db\ActiveRecord
         return $this->save(false, ['status']);
     }
 
-    public function publish(): bool
-    {
-        $this->status = self::STATUS_PUBLISHED;
-        $this->published_at = time();
-        return $this->save(false, ['status', 'published_at']);
-    }
-
     public static function getStatuses(): array
     {
         return [

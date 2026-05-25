@@ -2,44 +2,33 @@
 
 namespace common\services;
 
+
 use common\entities\Album;
-use common\entities\Subscription;
-use common\queue\jobs\AlbumReleaseNotificationJob;
+use common\exceptions\ALbumPublishedException;
+use common\repositories\AlbumRepository;
+use common\repositories\SubscriptionRepository;
+use common\services\AlbumNotificationService;
+
 
 class AlbumPublishService
 {
-    public function publish(Album $album): bool
+    public function __construct(
+        private SubscriptionRepository $subscriptions,
+        private AlbumRepository $albums,
+        private AlbumNotificationService $albumNotificationService
+    ) {
+    }
+
+    public function publish(Album $album): void
     {
         if ($album->status === Album::STATUS_PUBLISHED) {
-            return false;
+            throw new ALbumPublishedException();
         }
 
-        $subscriptions = Subscription::find()
-            ->where(['artist_id' => $album->artist_id])
-            ->with('user')
-            ->all();
+        $subscriptions = $this->subscriptions->findSubscriptionsWithUser($album->artist_id);
 
-        $publishedResult = $album->publish();
+        $this->albums->publish($album);
 
-        $albumData = [
-            'name' => $album->name,
-            'artistName' => $album->artist->name,
-        ];
-
-        foreach ($subscriptions as $subscription) {
-            $user = $subscription->user;
-
-            if (!$user || !$user->email) {
-                continue;
-            }
-
-            \Yii::$app->queue->push(new AlbumReleaseNotificationJob([
-                'userEmail' => $user->email,
-                'username' => $user->username,
-                'albumData' => $albumData,
-            ]));
-        }
-
-        return $publishedResult;
+        $this->albumNotificationService->sendAlbumNotifications($album, $subscriptions);
     }
 }

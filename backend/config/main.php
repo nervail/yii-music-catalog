@@ -26,6 +26,7 @@ return [
         'definitions' => [
             \yii\widgets\LinkPager::class => \yii\bootstrap5\LinkPager::class,
         ],
+        'singletons' => []
     ],
     'components' => [
         'request' => [
