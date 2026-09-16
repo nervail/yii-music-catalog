@@ -23,7 +23,6 @@ class AlbumSearch extends Album
             [['name'], 'string'],
 
             [['id', 'artist_id'], 'integer'],
-            [['release_date'], 'safe'],
         ];
     }
 

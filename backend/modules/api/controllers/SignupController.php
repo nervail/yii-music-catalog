@@ -46,7 +46,6 @@ class SignupController extends BaseApiController
 
             return $this->success([
                 'message' => 'Signed up successfully. Please check your email to verify your account.',
-                'access_token' => $user->access_token,
                 'username' => $user->username,
             ]);
         }

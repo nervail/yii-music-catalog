@@ -14,7 +14,6 @@ use yii\helpers\ArrayHelper;
  * @property int $id
  * @property string $name
  * @property int $artist_id
- * @property string|null $release_date
  * @property string|null $image_url
  * @property int $created_at
  * @property int $updated_at

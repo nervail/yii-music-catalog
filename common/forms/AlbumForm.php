@@ -16,7 +16,6 @@ class AlbumForm extends Model
     public $name;
     public $artist_id;
     public $image;
-    public $release_date;
     public $currentImage;
     private ?Album $_album = null;
 
@@ -26,7 +25,6 @@ class AlbumForm extends Model
             // Общие правила валидации для всех сценариев
             [['artist_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['release_date'], 'date', 'format' => 'php:Y-m-d'],
             [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => Artist::class, 'targetAttribute' => 'id'],
             [['image'], 'file', 
                 'skipOnEmpty' => true, 
@@ -36,10 +34,10 @@ class AlbumForm extends Model
             ],
             
             // Create
-            [['name', 'release_date', 'artist_id', 'image'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['name', 'artist_id', 'image'], 'required', 'on' => self::SCENARIO_CREATE],
 
             // Update
-            [['name', 'release_date', 'artist_id'], 'required', 'on' => self::SCENARIO_UPDATE],
+            [['name', 'artist_id'], 'required', 'on' => self::SCENARIO_UPDATE],
 
             // Get Albums
             [['artist_id'], 'required', 'on' => self::SCENARIO_GET_ALBUMS],
@@ -50,8 +48,8 @@ class AlbumForm extends Model
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['name', 'release_date', 'artist_id', 'image'],
-            self::SCENARIO_UPDATE => ['name', 'release_date', 'artist_id', 'image'],
+            self::SCENARIO_CREATE => ['name', 'artist_id', 'image'],
+            self::SCENARIO_UPDATE => ['name', 'artist_id', 'image'],
             self::SCENARIO_GET_ALBUMS => ['name', 'artist_id'],
         ];
     }
@@ -95,7 +93,6 @@ class AlbumForm extends Model
             }
 
             $album->name = $this->name;
-            $album->release_date = $this->release_date;
             $album->artist_id = $this->artist_id;
 
             if (!$album->save()) {

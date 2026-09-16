@@ -40,13 +40,6 @@ $this->title = $model->scenario === $model::SCENARIO_CREATE ? 'Create Album' : '
                     )->label('Artist') ?>
                 </div>
 
-                <div class="form-group">
-                    <?= $form->field($model, 'release_date')->textInput([
-                        'type' => 'date',
-                        'placeholder' => 'YYYY-MM-DD'
-                    ]) ?>
-                </div>
-
                 <?php if ($model->currentImage): ?>
                     <div class="form-group">
                         <div class="mb-2">

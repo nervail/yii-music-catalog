@@ -21,8 +21,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'artist_id') ?>
 
-    <?= $form->field($model, 'release_date') ?>
-
     <?= $form->field($model, 'image_url') ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
