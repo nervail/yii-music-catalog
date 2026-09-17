@@ -1,0 +1,82 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  margin-bottom: 32px;
+}
+
+.heroTitle {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.heroCopy {
+  color: var(--text-dim);
+  font-size: 14px;
+  max-width: 52ch;
+}
+
+.searchBar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.searchBar input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  padding: 10px 14px;
+  color: var(--text);
+}
+
+.searchBar input::placeholder {
+  color: var(--text-dim);
+}
+
+.searchBar input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.empty {
+  padding: 40px 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  text-align: center;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.pageLabel {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 32px 16px 60px;
+  }
+
+  .heroTitle {
+    font-size: 28px;
+  }
+}
