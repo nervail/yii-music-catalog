@@ -6,6 +6,25 @@ export function getMe() {
   });
 }
 
+export function requestPasswordReset(email) {
+  return apiRequest('/request-password-reset', {
+    method: 'POST',
+    body: {
+      email
+    },
+  });
+}
+
+export function resetPassword(token, password) {
+  return apiRequest('/reset-password', {
+    method: 'POST',
+    body: {
+      token,
+      password, 
+    },
+  });
+}
+
 export function signup({ username, password, email }) {
   return apiRequest('/signup', { method: 'POST', body: { username, password, email } });
 }
