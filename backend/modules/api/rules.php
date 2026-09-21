@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'GET me' => 'auth/me',
+
     'POST signup' => 'signup/index',
 
     'POST login' => 'auth/login',

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
-  const { isAuthenticated, username, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -28,7 +28,7 @@ export default function Navbar() {
       <nav className={styles.right}>
         {isAuthenticated ? (
           <>
-            <span className={styles.user}>{username}</span>
+            <span className={styles.user}>{user?.username}</span>
             <button type="button" className="btn btn-ghost" onClick={handleLogout} disabled={loggingOut}>
               {loggingOut ? 'Выходим…' : 'Выйти'}
             </button>

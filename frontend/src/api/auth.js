@@ -1,5 +1,11 @@
 import { apiRequest } from './client';
 
+export function getMe() {
+  return apiRequest('/me', {
+    auth: true,
+  });
+}
+
 export function signup({ username, password, email }) {
   return apiRequest('/signup', { method: 'POST', body: { username, password, email } });
 }
