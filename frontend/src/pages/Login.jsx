@@ -75,6 +75,10 @@ export default function Login() {
             />
           </div>
 
+          <p className={styles.forgot}>
+            <Link to="/forgot-password">Забыли пароль?</Link>
+          </p>
+
           {formError && <p className="field-error">{formError}</p>}
 
           <button type="submit" className="btn btn-primary" disabled={submitting}>

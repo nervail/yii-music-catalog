@@ -125,3 +125,16 @@
   }
 }
 
+.forgot {
+  font-size: 13px;
+  margin-top: -8px;
+}
+
+.forgot a {
+  color: var(--accent-deep);
+  text-decoration: none;
+}
+
+.forgot a:hover {
+  text-decoration: underline;
+}

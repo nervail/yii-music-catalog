@@ -24,19 +24,4 @@ class ResetPasswordForm extends Model
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
         ];
     }
-
-    /**
-     * Resets password.
-     *
-     * @return bool if password was reset.
-     */
-    public function resetPassword()
-    {
-        $user = $this->_user;
-        $user->setPassword($this->password);
-        $user->removePasswordResetToken();
-        $user->generateAuthKey();
-
-        return $user->save(false);
-    }
 }
