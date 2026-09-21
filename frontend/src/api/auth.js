@@ -49,3 +49,12 @@ export function logout() {
 export function verifyEmail(token) {
   return apiRequest('/verify-email', { method: 'POST', body: { token } });
 }
+
+export function resendVerificationEmail(email) {
+  return apiRequest('/resend-verification-email', {
+    method: 'POST',
+    body: {
+      email,
+    },
+  });
+}

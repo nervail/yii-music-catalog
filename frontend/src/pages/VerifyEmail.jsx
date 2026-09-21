@@ -79,16 +79,20 @@ export default function VerifyEmail() {
           {status === 'error' && (
             <>
               <h2 className={styles.cardTitle}>
-                Не удалось подтвердить email
+                Ссылка недействительна
               </h2>
 
               <p className={styles.confirmText}>
-                {message}
+                Ссылка истекла или уже была использована.
               </p>
 
-              <Link to="/login" className="btn btn-primary">
-                Перейти ко входу
+              <Link to="/resend-verification" className="btn btn-primary">
+                Отправить письмо повторно
               </Link>
+
+              <p className={styles.switch}>
+                <Link to="/login">Вернуться ко входу</Link>
+              </p>
             </>
           )}
         </div>
