@@ -33,6 +33,17 @@ class AuthController extends BaseApiController
         return $behaviors;
     }
 
+    public function actionMe()
+    {
+        $user = \Yii::$app->user->identity;
+        return $this->success([
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'status' => $user->status,
+        ]);
+    }
+
     /**
      * Logs in a user.
      *
