@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { resetPassword } from '../api/auth';
+import { checkResetToken, resetPassword } from '../api/auth';
 import { ApiError } from '../api/client';
 import styles from './AuthLayout.module.css';
 
@@ -9,6 +9,30 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   const token = searchParams.get('token');
+
+  const [checkingToken, setCheckingToken] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
+
+  useEffect(() => {
+    async function checkToken() {
+      if (!token) {
+        setTokenValid(false);
+        setCheckingToken(false);
+        return;
+      }
+
+      try {
+        await checkResetToken(token);
+        setTokenValid(true);
+      } catch {
+        setTokenValid(false);
+      } finally {
+        setCheckingToken(false);
+      }
+    }
+
+    checkToken();
+  }, [token]);
 
   const [form, setForm] = useState({
     password: '',
@@ -57,6 +81,68 @@ export default function ResetPassword() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (checkingToken) {
+    return (
+      <div className={styles.screen}>
+        <aside className={styles.side}>
+          <div className={styles.grooves} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <div className={styles.sideText}>
+            <h1 className={styles.sideTitle}>Восстановление доступа</h1>
+            <p className={styles.sideCopy}>
+              Проверяем ссылку для сброса пароля.
+            </p>
+          </div>
+        </aside>
+
+        <main className={styles.formPane}>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Проверяем ссылку…</h2>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!tokenValid) {
+    return (
+      <div className={styles.screen}>
+        <aside className={styles.side}>
+          <div className={styles.grooves} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <div className={styles.sideText}>
+            <h1 className={styles.sideTitle}>Ссылка недействительна</h1>
+            <p className={styles.sideCopy}>
+              Ссылка истекла или уже была использована.
+            </p>
+          </div>
+        </aside>
+
+        <main className={styles.formPane}>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Сброс пароля</h2>
+
+            <p className={styles.confirmText}>
+              Запроси новое письмо для восстановления пароля.
+            </p>
+
+            <Link to="/forgot-password" className="btn btn-primary">
+              Запросить новую ссылку
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   if (success) {

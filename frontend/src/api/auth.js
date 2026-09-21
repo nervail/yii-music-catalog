@@ -6,6 +6,15 @@ export function getMe() {
   });
 }
 
+export function checkResetToken(token) {
+  return apiRequest('/check-reset-token', {
+    method: 'POST',
+    body: {
+      token,
+    },
+  });
+}
+
 export function requestPasswordReset(email) {
   return apiRequest('/request-password-reset', {
     method: 'POST',
