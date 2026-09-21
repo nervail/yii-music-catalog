@@ -88,6 +88,13 @@ export default function Login() {
           <p className={styles.switch}>
             Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
           </p>
+
+          <p className={styles.switch}>
+            Не подтвердили email?{' '}
+            <Link to="/resend-verification">
+              Отправить письмо повторно
+            </Link>
+          </p>
         </form>
       </main>
     </div>
