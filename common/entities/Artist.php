@@ -3,7 +3,6 @@
 namespace common\entities;
 
 use yii\db\ActiveRecord;
-use common\entities\Item;
 use yii\helpers\ArrayHelper;
 
 class Artist extends ActiveRecord
@@ -37,12 +36,7 @@ class Artist extends ActiveRecord
 
     public function extraFields()
     {
-        return ['items', 'albums'];
-    }
-
-    public function getItems()
-    {
-        return $this->hasMany(Item::class, ['artist_id' => 'id']);
+        return ['albums'];
     }
 
     public static function getList(): array

@@ -18,8 +18,10 @@ class ItemForm extends Model
     public $name;
     public $description;
     public $image;
-    public $artist_id;
     public $album_id;
+
+    // Виртуальные поля
+    public $artist_id;
     public $genre_ids = [];
     public $currentImage;
     private ?Item $_item = null;
@@ -36,7 +38,6 @@ class ItemForm extends Model
                 'targetAttribute' => 'id'
             ]],
             [['album_id'], 'exist', 'targetClass' => Album::class, 'targetAttribute' => 'id'],
-            [['artist_id'], 'exist', 'targetClass' => Artist::class, 'targetAttribute' => 'id'],
             [['album_id'], 'validateAlbumArtist'],
             [['name'], 'string', 'max' => 255],
             [['description'], 'string'],
@@ -73,6 +74,8 @@ class ItemForm extends Model
         $this->_item = $item;
 
         $this->setAttributes($item->getAttributes());
+
+        $this->artist_id = $item->album->artist_id;
         $this->genre_ids = ArrayHelper::getColumn($item->genres, 'id');
         $this->currentImage = $item->getImageLink();
     }
@@ -118,7 +121,6 @@ class ItemForm extends Model
 
             $item->name = $this->name;
             $item->description = $this->description;
-            $item->artist_id = $this->artist_id;
             $item->album_id = $this->album_id;
 
             if (!$item->save()) {

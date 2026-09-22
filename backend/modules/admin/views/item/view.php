@@ -53,9 +53,8 @@ use yii\widgets\DetailView;
                         ],
                         [
                             'label' => 'Artist name',
-                            'value' => $model->artist->name,
+                            'value' => $model->album->artist->name,
                         ],
-                        'artist_id',
                         [
                             'label' => 'Genres',
                             'value' => implode(', ', ArrayHelper::getColumn($model->genres, 'name')),

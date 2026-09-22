@@ -5,8 +5,8 @@ namespace common\entities;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use common\entities\Artist;
 use common\entities\Genre;
+use common\entities\Album;
 
 class Item extends ActiveRecord
 {
@@ -31,9 +31,15 @@ class Item extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'artist_id', 'image_url'], 'required'],
+            [['name', 'description', 'image_url'], 'required'],
             [['name', 'description'], 'string'],
-            [['artist_id'], 'integer'],
+
+            [['album_id'], 'required'],
+            [['album_id'], 'integer'],
+            [['album_id'], 'exist',
+                'targetClass' => Album::class,
+                'targetAttribute' => 'id',
+            ],
         ];
     }
 
@@ -46,21 +52,14 @@ class Item extends ActiveRecord
             'image_url' => function ($model) {
                 return $model->getImageLink();
             },
-            'artist_id',
             'album_id',
         ];
     }
 
     public function extraFields()
     {
-        return ['artist', 'album', 'genres'];
+        return ['album', 'genres'];
     }
-
-    public function getArtist()
-    {
-        return $this->hasOne(Artist::class, ['id' => 'artist_id']);
-    }
-
 
     public function getGenres()
     {

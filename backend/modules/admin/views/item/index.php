@@ -66,7 +66,7 @@ use yii\helpers\ArrayHelper;
         'image_url',
         [
             'label' => 'Artist',
-            'value' => 'artist.name'
+            'value' => 'album.artist.name'
         ],  
         [
             'label' => 'Genres',
