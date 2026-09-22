@@ -76,6 +76,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+.trackLink {
+  text-decoration: none;
+  color: inherit;
+}
+
 @media (max-width: 560px) {
   .row {
     gap: 12px;

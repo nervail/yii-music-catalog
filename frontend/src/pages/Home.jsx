@@ -30,7 +30,7 @@ export default function Home() {
       page: page + 1,
       'per-page': PER_PAGE,
       name: search || undefined,
-      expand: 'artist,genres',
+      expand: 'album.artist,genres',
     });
 
       const list = data?.items ?? [];
