@@ -21,7 +21,7 @@ export default function Track() {
     setError(null);
 
     fetchItem(id, {
-      expand: 'artist,album,genres',
+      expand: 'album.artist,genres',
     })
       .then((data) => {
         setTrack(data);
@@ -78,10 +78,10 @@ export default function Track() {
                     </span>
 
                     <Link
-                      to={`/artists/${track.artist.id}`}
+                      to={`/artists/${track.album.artist.id}`}
                       className={styles.link}
                     >
-                      {track.artist.name}
+                      {track.album.artist.name}
                     </Link>
                   </div>
 
