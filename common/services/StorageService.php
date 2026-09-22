@@ -59,4 +59,39 @@ class StorageService
 
         return $this->s3->getObjectUrl($this->bucket, $key);
     }
+
+    public function clearBucket(): void
+    {
+        $objects = $this->s3->listObjectsV2([
+            'Bucket' => $this->bucket,
+        ]);
+
+        if (empty($objects['Contents'])) {
+            return;
+        }
+
+        $keys = [];
+
+        foreach ($objects['Contents'] as $object) {
+            $keys[] = ['Key' => $object['Key']];
+        }
+
+        $this->s3->deleteObjects([
+            'Bucket' => $this->bucket,
+            'Delete' => [
+                'Objects' => $keys,
+                'Quiet' => true,
+            ],
+        ]);
+    }
+
+    public function uploadFixture(string $filePath, string $key): void
+    {
+        $this->s3->putObject([
+            'Bucket' => $this->bucket,
+            'Key' => $key,
+            'SourceFile' => $filePath,
+            'ContentType' => mime_content_type($filePath),
+        ]);
+    }
 }
