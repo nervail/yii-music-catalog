@@ -22,7 +22,7 @@ class ArtistSearch extends Artist
 
     public function search($params, $formName = null): ActiveDataProvider
     {
-        $query = Artist::find()->with('albums', 'items');
+        $query = Artist::find()->with('albums');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

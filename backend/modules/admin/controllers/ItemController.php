@@ -2,12 +2,10 @@
 
 namespace backend\modules\admin\controllers;
 
-use common\entities\Artist;
 use common\entities\Item;
 use common\forms\ItemForm;
 use common\search\ItemSearch;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -122,7 +120,7 @@ class ItemController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Track created');
-                return $this->redirect('/');
+                return $this->redirect('index');
             }
         }
 
@@ -133,7 +131,7 @@ class ItemController extends Controller
 
     public function actionUpdate($id)
     {
-        $item = $this->findModel($id, ['genres', 'artist']);
+        $item = $this->findModel($id, ['genres', 'album.artist']);
 
         $model = new ItemForm();
         $model->scenario = ItemForm::SCENARIO_UPDATE;
@@ -155,7 +153,7 @@ class ItemController extends Controller
 
     public function actionView($id)
     {
-        $model = $this->findModel($id, ['genres', 'artist']);
+        $model = $this->findModel($id, ['genres', 'album.artist']);
 
         return $this->render('view', [
             'model' => $model,

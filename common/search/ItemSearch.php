@@ -11,6 +11,7 @@ class ItemSearch extends Item
     const PAGE_SIZE_LIMIT = [1, 50];
     
     public $genre_ids = [];
+    public $artist_id;
 
     public function rules()
     {
@@ -25,9 +26,10 @@ class ItemSearch extends Item
 
     public function search($params, $formName = null): ActiveDataProvider
     {
-        $query = Item::find()->with(['artist', 'genres', 'album']);
+        $query = Item::find()->with(['genres', 'album']);
         $query->joinWith('genres', false);
-        
+        $query->joinWith('album', false);
+
         $query->distinct();
 
         $dataProvider = new ActiveDataProvider([
@@ -55,7 +57,7 @@ class ItemSearch extends Item
             ->andFilterWhere(['like', 'items.name', $this->name])
             ->andFilterWhere(['like', 'items.description', $this->description])
             ->andFilterWhere(['items.status' => $this->status])
-            ->andFilterWhere(['items.artist_id' => $this->artist_id])
+            ->andFilterWhere(['albums.artist_id' => $this->artist_id])
             ->andFilterWhere(['genres.id' => $this->genre_ids]);
 
         return $dataProvider;
