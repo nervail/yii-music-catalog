@@ -7,6 +7,7 @@ use common\exceptions\ALbumPublishedException;
 use common\forms\AlbumForm;
 use common\search\AlbumSearch;
 use common\services\AlbumPublishService;
+use common\services\AlbumService;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -29,6 +30,7 @@ class AlbumController extends Controller
         $id, 
         $module, 
         private AlbumPublishService $albumPublishService,
+        private AlbumService $albumService,
         $config = []
         )
     {
@@ -202,10 +204,16 @@ class AlbumController extends Controller
      */
     public function actionDelete(int $id)
     {
-        if ($this->findModel($id)->archive()) {
-            \Yii::$app->session->setFlash('success', 'Album archived');
+        $album = $this->findModel($id);
+
+        if ($album === null) {
+            throw new NotFoundHttpException('Album not found.');
+        }
+        
+        if ($this->albumService->delete($album)) {
+            \Yii::$app->session->setFlash('success', 'Album deleted');
         } else {
-            \Yii::$app->session->setFlash('error', 'Error archiving album');
+            \Yii::$app->session->setFlash('error', 'Error deleted album');
         }
 
         return $this->redirect(['index']);

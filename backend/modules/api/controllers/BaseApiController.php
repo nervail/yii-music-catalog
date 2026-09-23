@@ -42,14 +42,23 @@ class BaseApiController extends Controller
         ];
     }
 
-    public function findModel(int $id, string $modelClass)
-    {
+    public function findModel(
+        int $id,
+        string $modelClass,
+        array $conditions = []
+    ) {
         if (!is_subclass_of($modelClass, ActiveRecordInterface::class)) {
             \Yii::error("Class $modelClass must implement ActiveRecord interface");
             throw new UnprocessableEntityHttpException("Error while handling request");
         }
 
-        if (($model = $modelClass::findOne($id)) !== null) {
+        $query = $modelClass::find()->where(['id' => $id]);
+
+        if ($conditions) {
+            $query->andWhere($conditions);
+        }
+
+        if (($model = $query->one()) !== null) {
             return $model;
         }
 

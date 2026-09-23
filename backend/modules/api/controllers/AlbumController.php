@@ -4,7 +4,7 @@ namespace backend\modules\api\controllers;
 
 use backend\modules\api\controllers\BaseApiController;
 use common\entities\Album;
-use common\search\AlbumSearch;
+use backend\modules\api\search\AlbumSearch;
 
 class AlbumController extends BaseApiController
 {
@@ -36,8 +36,10 @@ class AlbumController extends BaseApiController
 
     public function actionView(int $id)
     {
-        $item = $this->findModel($id, Album::class);
+        $album = $this->findModel($id, Album::class, [
+            'status' => Album::STATUS_PUBLISHED,
+        ]);
 
-        return $this->success($item);
+        return $this->success($album);
     }
 }

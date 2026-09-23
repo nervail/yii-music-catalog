@@ -26,7 +26,6 @@ class Album extends \yii\db\ActiveRecord
 
     public const STATUS_DRAFT = 0;
     public const STATUS_PUBLISHED = 1;
-    public const STATUS_ARCHIVED = 2;
 
     /**
      * {@inheritdoc}
@@ -56,7 +55,7 @@ class Album extends \yii\db\ActiveRecord
             [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => Artist::class, 'targetAttribute' => ['artist_id' => 'id']],
             [['status'], 'integer'],
             [['status'], 'default', 'value' => self::STATUS_DRAFT],
-            [['status'], 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_PUBLISHED, self::STATUS_ARCHIVED]],
+            [['status'], 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_PUBLISHED]],
             [['published_at'], 'integer'],
         ];
     }
@@ -76,18 +75,12 @@ class Album extends \yii\db\ActiveRecord
         return ['artist', 'items'];
     }
 
-    public function archive(): bool
-    {
-        $this->status = self::STATUS_ARCHIVED;
-        return $this->save(false, ['status']);
-    }
 
     public static function getStatuses(): array
     {
         return [
             self::STATUS_DRAFT => 'Draft',
             self::STATUS_PUBLISHED => 'Published',
-            self::STATUS_ARCHIVED => 'Archived',
         ];
     }
 

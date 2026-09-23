@@ -93,7 +93,6 @@ $this->title = 'Albums Catalog';
                                 $classes = [
                                     $model::STATUS_DRAFT => 'badge badge-secondary',
                                     $model::STATUS_PUBLISHED => 'badge badge-success',
-                                    $model::STATUS_ARCHIVED => 'badge badge-dark',
                                 ];
 
                                 $class = $classes[$model->status] ?? 'badge badge-light';

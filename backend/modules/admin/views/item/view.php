@@ -59,7 +59,6 @@ use yii\widgets\DetailView;
                             'label' => 'Genres',
                             'value' => implode(', ', ArrayHelper::getColumn($model->genres, 'name')),
                         ],
-                        'status',
                         [
                             'label' => 'created_at',
                             'value' => \Yii::$app->formatter->asDateTime($model->created_at),

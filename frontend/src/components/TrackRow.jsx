@@ -61,12 +61,6 @@ export default function TrackRow({ index, item }) {
         width="80"
         height="80"
       />
-
-      {item.status && (
-        <span className={styles.status}>
-          {item.status}
-        </span>
-      )}
     </li>
   );
 }
