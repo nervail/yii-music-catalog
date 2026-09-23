@@ -3,7 +3,6 @@
 namespace common\forms;
 
 use common\entities\Album;
-use common\entities\Artist;
 use common\entities\Genre;
 use common\entities\Item;
 use yii\base\Model;

@@ -4,7 +4,9 @@ namespace backend\modules\api\controllers;
 
 use backend\modules\api\controllers\BaseApiController;
 use common\entities\Item;
-use common\search\ItemSearch;
+use backend\modules\api\search\ItemSearch;
+use common\entities\Album;
+use yii\web\NotFoundHttpException;
 
 class ItemController extends BaseApiController
 {
@@ -36,7 +38,17 @@ class ItemController extends BaseApiController
 
     public function actionView(int $id)
     {
-        $item = $this->findModel($id, Item::class);
+        $item = Item::find()
+            ->joinWith('album')
+            ->andWhere([
+                'items.id' => $id,
+                'albums.status' => Album::STATUS_PUBLISHED,
+            ])
+            ->one();
+
+        if ($item === null) {
+            throw new NotFoundHttpException('Object not found');
+        }
 
         return $this->success($item);
     }

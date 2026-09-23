@@ -3,8 +3,8 @@
 namespace backend\modules\api\controllers;
 
 use backend\modules\api\controllers\BaseApiController;
-use common\entities\Artist;
-use common\search\ArtistSearch;
+use backend\modules\api\entities\Artist;
+use backend\modules\api\search\ArtistSearch;
 
 class ArtistController extends BaseApiController
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace common\search;
+namespace backend\modules\api\search;
 
+use common\entities\Album;
 use common\entities\Item;
 use yii\data\ActiveDataProvider;
 
@@ -26,11 +27,13 @@ class ItemSearch extends Item
 
     public function search($params, $formName = null): ActiveDataProvider
     {
-        $query = Item::find()->with(['genres', 'album']);
-        $query->joinWith('genres', false);
-        $query->joinWith('album', false);
-
-        $query->distinct();
+        $query = Item::find()->with(['genres', 'album'])
+            ->joinWith('genres', false)
+            ->joinWith('album', false)
+            ->andWhere([
+                'albums.status' => Album::STATUS_PUBLISHED,
+            ])
+            ->distinct();
 
         $dataProvider = new ActiveDataProvider([
             'pagination' => [

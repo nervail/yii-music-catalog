@@ -30,8 +30,6 @@ use yii\helpers\ArrayHelper;
     <?= $form->field($searchModel, 'id')->textInput(['placeholder' => 'ID', 'style' => 'width: 70px']) ?>
     
     <?= $form->field($searchModel, 'name')->textInput(['placeholder' => 'Name']) ?>
-    
-    <?= $form->field($searchModel, 'status')->textInput(['placeholder' => 'Status', 'style' => 'width: 100px']) ?>
 
     <?= $form->field($searchModel, 'artist_id')->dropDownList(Artist::getList(), [
         'prompt' => 'Choose an artist',
@@ -74,18 +72,17 @@ use yii\helpers\ArrayHelper;
                 $genres = ArrayHelper::getColumn($model->genres, 'name');
                 return implode(', ', $genres);
             }
-        ],  
-        'status',
+        ],
         [
             'attribute' => 'created_at',
             'value' => function ($model) {
-                return Yii::$app->formatter->asDateTime($model->created_at);
+                return \Yii::$app->formatter->asDateTime($model->created_at);
             }
         ],
         [
             'attribute' => 'updated_at',
             'value' => function ($model) {
-                return Yii::$app->formatter->asDateTime($model->updated_at);
+                return \Yii::$app->formatter->asDateTime($model->updated_at);
             }
         ],
         ['class' => 'yii\grid\ActionColumn'],
