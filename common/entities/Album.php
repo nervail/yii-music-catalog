@@ -67,6 +67,9 @@ class Album extends \yii\db\ActiveRecord
             'name',
             'status',
             'published_at',
+            'image_url' => function ($model) {
+                return $model->getImageLink();
+            },
         ];
     }
 

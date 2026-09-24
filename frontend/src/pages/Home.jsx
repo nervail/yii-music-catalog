@@ -63,85 +63,88 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <h1 className={styles.heroTitle}>Каталог треков</h1>
-
-        <p className={styles.heroCopy}>
-          Просматривай и ищи по библиотеке свои любимые треки.
-        </p>
-      </section>
-
-      <form
-        className={styles.searchBar}
-        onSubmit={handleSearchSubmit}
-        role="search"
-      >
-        <input
-          type="search"
-          placeholder="Название трека…"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          aria-label="Поиск по названию"
-        />
-
-        <button type="submit" className="btn btn-primary">
-          Найти
-        </button>
-      </form>
-
-      {status === 'loading' && (
-        <Loading label="Загружаем каталог…" />
-      )}
-
-      {status === 'error' && (
-        <ErrorMessage message={error} onRetry={load} />
-      )}
-
-      {status === 'ready' && items.length === 0 && (
-        <p className={styles.empty}>
-          {search
-            ? `По запросу «${search}» ничего не нашлось.`
-            : 'В каталоге пока нет треков.'}
-        </p>
-      )}
-
-      {status === 'ready' && items.length > 0 && (
-        <>
-          <ul className={styles.list}>
-            {items.map((item, i) => (
-              <TrackRow
-                key={item.id}
-                index={page * PER_PAGE + i + 1}
-                item={item}
-              />
-            ))}
-          </ul>
-
-          <div className={styles.pagination}>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              disabled={page === 0}
-            >
-              Назад
-            </button>
-
-            <span className={styles.pageLabel}>
-              Страница {page + 1} из {pageCount}
-            </span>
-
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={!hasNextPage}
-            >
-              Дальше
-            </button>
+      <main className={styles.pageContent}>
+        <div className={styles.header}>
+          <div>
+            <p className={styles.label}>Каталог</p>
+            <h1 className={styles.title}>Треки</h1>
           </div>
-        </>
-      )}
+        </div>
+
+        <div className={styles.content}>
+          <form
+            className={styles.searchBar}
+            onSubmit={handleSearchSubmit}
+            role="search"
+          >
+            <input
+              type="search"
+              placeholder="Название трека…"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              aria-label="Поиск по названию"
+            />
+
+            <button type="submit" className="btn btn-primary">
+              Найти
+            </button>
+          </form>
+
+          {status === 'loading' && (
+            <Loading label="Загружаем каталог…" />
+          )}
+
+          {status === 'error' && (
+            <ErrorMessage message={error} onRetry={load} />
+          )}
+
+          {status === 'ready' && items.length === 0 && (
+            <p className={styles.empty}>
+              {search
+                ? `По запросу «${search}» ничего не нашлось.`
+                : 'В каталоге пока нет треков.'}
+            </p>
+          )}
+
+          {status === 'ready' && items.length > 0 && (
+            <>
+              <ul className={styles.list}>
+                {items.map((item, i) => (
+                  <TrackRow
+                    key={item.id}
+                    index={page * PER_PAGE + i + 1}
+                    item={item}
+                  />
+                ))}
+              </ul>
+
+              <div className={styles.pagination}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                >
+                  Назад
+                </button>
+
+                <span className={styles.pageLabel}>
+                  Страница {page + 1} из {pageCount}
+                </span>
+
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page + 1 >= pageCount}
+                >
+                  Дальше
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
