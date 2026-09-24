@@ -19,12 +19,31 @@
   height: 14px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 4px var(--line);
+  box-shadow:
+    0 0 0 3px var(--surface-2),
+    0 0 0 4px var(--line);
 }
 
 .brandName {
   font-family: var(--font-display);
   font-size: 19px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navLink {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--text);
 }
 
 .right {
@@ -40,9 +59,23 @@
   margin-right: 4px;
 }
 
+@media (max-width: 760px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .nav {
+    gap: 12px;
+  }
+}
+
 @media (max-width: 560px) {
   .header {
     padding: 16px 20px;
+  }
+
+  .nav {
+    display: none;
   }
 
   .user {
