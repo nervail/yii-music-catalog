@@ -51,7 +51,7 @@ export default function Track() {
         {status === 'ready' && track && (
           <>
             <div className={styles.breadcrumbs}>
-              <Link to="/">Каталог</Link>
+              <Link to="/tracks">Треки</Link>
               <span>/</span>
               <span>{track.name}</span>
             </div>
