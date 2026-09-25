@@ -9,9 +9,12 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ResendVerification from './pages/ResendVerification';
+
 import Track from './pages/Track';
 import Album from './pages/Album';
 import Albums from './pages/Albums';
+import Artists from './pages/Artists';
+import Artist from './pages/Artist';
 
 export default function App() {
   const location = useLocation();
@@ -33,7 +36,6 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/tracks" replace />} />
-        <Route path="/tracks" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -42,10 +44,14 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/resend-verification" element={<ResendVerification />} />
         
+        <Route path="/tracks" element={<Home />} />
         <Route path="/tracks/:id" element={<Track />} />
 
         <Route path="/albums" element={<Albums />} />
         <Route path="/albums/:id" element={<Album />} />
+
+        <Route path="/artists" element={<Artists />} />
+        <Route path="/artists/:id" element={<Artist />} />
       </Routes>
     </>
   );
