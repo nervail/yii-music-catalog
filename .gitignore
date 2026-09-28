@@ -46,3 +46,8 @@ phpunit.phar
 /backend/web/index-test.php
 /backend/web/robots.txt
 frontend.md
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local

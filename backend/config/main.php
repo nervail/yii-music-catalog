@@ -5,12 +5,10 @@ use yii\web\UrlNormalizer;
 
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
-    require __DIR__ . '/../../common/config/params-local.php',
     require __DIR__ . '/params.php',
-    require __DIR__ . '/params-local.php'
 );
 
-return [
+$config = [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
@@ -31,6 +29,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'],
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
@@ -78,3 +77,19 @@ return [
     ],
     'params' => $params,
 ];
+
+if (YII_ENV_DEV) {
+    $config['bootstrap'][] = 'debug';
+
+    $config['modules']['debug'] = [
+        'class' => \yii\debug\Module::class,
+    ];
+
+    $config['bootstrap'][] = 'gii';
+
+    $config['modules']['gii'] = [
+        'class' => \yii\gii\Module::class,
+    ];
+}
+
+return $config;
