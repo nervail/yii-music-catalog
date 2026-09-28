@@ -15,6 +15,7 @@ import Album from './pages/Album';
 import Albums from './pages/Albums';
 import Artists from './pages/Artists';
 import Artist from './pages/Artist';
+import Subscriptions from './pages/Subscriptions';
 
 export default function App() {
   const location = useLocation();
@@ -52,6 +53,8 @@ export default function App() {
 
         <Route path="/artists" element={<Artists />} />
         <Route path="/artists/:id" element={<Artist />} />
+
+        <Route path="/subscriptions" element={<Subscriptions />} />
       </Routes>
     </>
   );

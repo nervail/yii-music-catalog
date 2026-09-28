@@ -83,6 +83,11 @@ class User extends ActiveRecord implements IdentityInterface
         return self::getStatusList()[$this->status] ?? 'Unknown';
     }
 
+    public function getSubscriptions()
+    {
+        return $this->hasMany(Subscription::class, ['user_id' => 'id']);
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -4,6 +4,7 @@ namespace common\entities;
 
 use yii\behaviors\TimestampBehavior;
 use common\entities\Artist;
+use Override;
 
 class Subscription extends \yii\db\ActiveRecord
 {
@@ -35,6 +36,12 @@ class Subscription extends \yii\db\ActiveRecord
             [['user_id', 'artist_id'], 'integer'],
             [['user_id', 'artist_id'], 'unique', 'targetAttribute' => ['user_id', 'artist_id']],
         ];
+    }
+
+    #[Override]
+    public function extraFields()
+    {
+        return ['artist'];
     }
 
     /**
