@@ -24,6 +24,7 @@ class SubscriptionController extends BaseApiController
             'actions' => [
                 'subscribe'  => ['post'],
                 'unsubscribe'   => ['post'],
+                'me'   => ['get'],
             ],
         ];
 
@@ -39,6 +40,11 @@ class SubscriptionController extends BaseApiController
                     'allow' => true,
                     'actions' => ['unsubscribe'],
                     'roles' => ['unsubscribeArtist'],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['me'],
+                    'roles' => ['subscribeArtist', 'unsubscribeArtist'],
                 ],
             ],
         ];
@@ -63,5 +69,16 @@ class SubscriptionController extends BaseApiController
         $service->unsubscribe($id, $userId);
 
         return $this->success();
+    }
+
+    public function actionMe()
+    {
+        $user = \Yii::$app->user->identity;
+
+        $subscriptions = $user->subscriptions;
+
+        return $this->success([
+            'subscriptions' => $subscriptions,
+        ]);
     }
 }

@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { fetchArtist } from '../api/artists';
+import {
+  fetchSubscriptions,
+  subscribe,
+  unsubscribe,
+} from '../api/subscriptions';
 import { ApiError } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
@@ -11,31 +17,103 @@ import styles from './Artist.module.css';
 
 export default function Artist() {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
 
   const [artist, setArtist] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState('idle');
+
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setStatus('loading');
-    setError(null);
+    let cancelled = false;
 
-    fetchArtist(id, {
-      expand: 'albums',
-    })
-      .then((data) => {
-        setArtist(data);
+    async function load() {
+      setStatus('loading');
+      setError(null);
+
+      try {
+        const artistPromise = fetchArtist(id, {
+          expand: 'albums',
+        });
+
+        const subscriptionsPromise = isAuthenticated
+          ? fetchSubscriptions()
+          : Promise.resolve(null);
+
+        const [artistData, subscriptionsData] = await Promise.all([
+          artistPromise,
+          subscriptionsPromise,
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        setArtist(artistData);
+
+        if (subscriptionsData) {
+          const subscribed = (
+            subscriptionsData.subscriptions ?? []
+          ).some(
+            (subscription) =>
+              subscription.artist_id === artistData.id
+          );
+
+          setIsSubscribed(subscribed);
+        } else {
+          setIsSubscribed(false);
+        }
+
         setStatus('ready');
-      })
-      .catch((err) => {
+      } catch (err) {
+        if (cancelled) {
+          return;
+        }
+
         setError(
           err instanceof ApiError
             ? err.message
             : 'Не получилось загрузить исполнителя.'
         );
         setStatus('error');
-      });
-  }, [id]);
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isAuthenticated]);
+
+  async function handleSubscription() {
+    if (!artist || subscriptionStatus !== 'idle') {
+      return;
+    }
+
+    setSubscriptionStatus('loading');
+    setError(null);
+
+    try {
+      if (isSubscribed) {
+        await unsubscribe(artist.id);
+        setIsSubscribed(false);
+      } else {
+        await subscribe(artist.id);
+        setIsSubscribed(true);
+      }
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Не получилось изменить подписку.'
+      );
+    } finally {
+      setSubscriptionStatus('idle');
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -62,6 +140,40 @@ export default function Artist() {
               <h1 className={styles.title}>
                 {artist.name}
               </h1>
+
+              {isAuthenticated && (
+                <div className={styles.subscription}>
+                  <button
+                    type="button"
+                    className={
+                      isSubscribed
+                        ? 'btn btn-ghost'
+                        : 'btn btn-primary'
+                    }
+                    onClick={handleSubscription}
+                    disabled={subscriptionStatus === 'loading'}
+                  >
+                    {subscriptionStatus === 'loading'
+                      ? isSubscribed
+                        ? 'Отписываемся…'
+                        : 'Подписываемся…'
+                      : isSubscribed
+                        ? 'Отписаться'
+                        : 'Подписаться'}
+                  </button>
+
+                  <p className={styles.subscriptionHint}>
+                    При выходе нового альбома придёт
+                    уведомление на почту.
+                  </p>
+                </div>
+              )}
+
+              {error && (
+                <div className={styles.subscriptionError}>
+                  <ErrorMessage message={error} />
+                </div>
+              )}
             </div>
 
             <div className={styles.content}>

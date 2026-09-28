@@ -12,6 +12,7 @@ class AlbumNotificationService
         $albumData = [
             'name' => $album->name,
             'artistName' => $album->artist->name,
+            'link' => \Yii::$app->params['frontendUrl'] . '/albums/' . $album->id,
         ];
 
         foreach ($subscriptions as $subscription) {

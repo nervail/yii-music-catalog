@@ -2,6 +2,7 @@
 
 return [
     'GET me' => 'auth/me',
+    'GET me/subscriptions' => 'subscription/me',
 
     'POST signup' => 'signup/index',
 

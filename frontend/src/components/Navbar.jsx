@@ -38,6 +38,15 @@ export default function Navbar() {
         <Link to="/artists" className={styles.navLink}>
           Исполнители
         </Link>
+        
+        {isAuthenticated && (
+          <Link
+            to="/subscriptions"
+            className={`${styles.navLink} ${styles.subscriptions}`}
+          >
+            Подписки
+          </Link>
+        )}
       </nav>
 
       <nav className={styles.right}>

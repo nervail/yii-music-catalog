@@ -51,6 +51,27 @@
   overflow-wrap: break-word;
 }
 
+.subscription {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.subscriptionHint {
+  margin: 0;
+  max-width: 420px;
+
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.subscriptionError {
+  margin-top: 16px;
+  max-width: 500px;
+}
+
 .sectionHeader {
   display: flex;
   align-items: baseline;
@@ -129,5 +150,11 @@
   .list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
+  }
+
+  .subscription {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
 }
