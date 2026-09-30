@@ -18,10 +18,11 @@ class ProjectController extends Controller
         
         $this->stdout("=== Resetting project ===\n\n");
 
-        $this->runStep(
-            'Reset database',
-            'migrate/fresh'
-        );
+        $this->stdout("--- Reset database ---\n");
+
+        $this->resetDatabase();
+
+        $this->stdout("\n");
 
         $this->runStep(
             'Load fixtures',
@@ -56,5 +57,28 @@ class ProjectController extends Controller
         }
 
         $this->stdout("\n");
+    }
+
+    private function resetDatabase(): void
+    {
+        $db = Yii::$app->db;
+
+        $tables = $db->schema->getTableNames();
+
+        $db->createCommand('SET FOREIGN_KEY_CHECKS = 0')->execute();
+
+        foreach ($tables as $table) {
+            $db->createCommand()
+                ->dropTable($table)
+                ->execute();
+        }
+
+        $db->createCommand('SET FOREIGN_KEY_CHECKS = 1')->execute();
+
+        $this->stdout("Database tables dropped.\n");
+
+        Yii::$app->runAction('migrate', [
+            'interactive' => 0,
+        ]);
     }
 }

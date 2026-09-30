@@ -8,9 +8,9 @@ class RbacController extends Controller
 {
     public function actionInit()
     {
-        if (!YII_ENV_DEV) {
-            throw new \yii\base\InvalidConfigException('Cannot removeAll RBAC in production!');
-        }   
+        if (!$this->confirm('This will remove all RBAC data. Continue?')) {
+            return;
+        }
 
         $auth = Yii::$app->authManager;
         $auth->removeAll();
