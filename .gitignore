@@ -44,5 +44,7 @@ frontend.md
 
 # Environment / secrets
 .env
+.env.dev
 .env.local
 .env.*.local
+.env.prod

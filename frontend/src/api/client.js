@@ -9,7 +9,7 @@ function resolveBase() {
   if (import.meta.env.DEV && !CONFIGURED_BASE) {
     return DEV_PREFIX;
   }
-  const root = (CONFIGURED_BASE || 'http://admin.music.local').replace(/\/$/, '');
+  const root = CONFIGURED_BASE.replace(/\/$/, '');
   return `${root}/api`;
 }
 

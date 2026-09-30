@@ -9,7 +9,7 @@ return [
     'user.emailVerifyTokenExpire' => 60*60*48,
     'user.passwordMinLength' => 8,
     
-    'storageHost' => $_ENV['S3_ENDPOINT'],
+    'storageHost' => $_ENV['STORAGE_HOST'],
     'storageBucket' => $_ENV['S3_BUCKET'],
     
     's3Params' => [

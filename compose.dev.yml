@@ -1,0 +1,94 @@
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: yii-music-catalog-backend
+    ports:
+      - "8080:80"
+    env_file:
+      - .env.dev
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      - minio
+      - mailhog
+  
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: yii-music-catalog-queue
+    command: php yii queue/listen 3 --verbose
+    env_file:
+      - .env.dev
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      - minio
+      - mailhog
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: yii-music-catalog-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  db:
+    image: mariadb:11
+    container_name: yii-music-catalog-db
+    environment:
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: yii-music-catalog-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 '${S3_KEY}' '${S3_SECRET}' &&
+      mc mb --ignore-existing local/music-catalog &&
+      mc anonymous set download local/music-catalog
+      "
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: yii-music-catalog-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  db_data:
+  minio_data:

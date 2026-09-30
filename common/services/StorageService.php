@@ -57,7 +57,9 @@ class StorageService
             return '';
         }
 
-        return $this->s3->getObjectUrl($this->bucket, $key);
+        return rtrim(Yii::$app->params['storageHost'], '/') . '/'
+        . $this->bucket . '/'
+        . ltrim($key, '/');
     }
 
     public function clearBucket(): void
