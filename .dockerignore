@@ -1,0 +1,14 @@
+.git
+.github
+
+.env
+
+vendor/
+node_modules/
+
+runtime/
+*/runtime/
+
+frontend/dist/
+
+docker-compose.yml

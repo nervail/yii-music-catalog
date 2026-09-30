@@ -1,0 +1,31 @@
+FROM php:8.2-apache
+
+WORKDIR /var/www/html
+
+RUN apt-get update \
+    && apt-get install -y libzip-dev unzip \
+    && docker-php-ext-install pdo_mysql zip \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY composer.json composer.lock ./
+
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --no-interaction \
+    --optimize-autoloader
+
+COPY . .
+
+COPY docker/apache/backend.conf /etc/apache2/sites-available/backend.conf
+
+RUN a2enmod rewrite \
+    && a2ensite backend.conf \
+    && a2dissite 000-default.conf
+
+RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 80

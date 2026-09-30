@@ -66,6 +66,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-api',
+            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'],
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
