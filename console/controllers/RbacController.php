@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\entities\User;
 use Yii;
 use yii\console\Controller;
 
@@ -112,5 +113,35 @@ class RbacController extends Controller
             echo "RBAC initialized successfully (DEV mode).\n";
             echo "Assignments: SuperAdmin(20), Admin(21), Moderator(22), User(23)\n";
         }
+    }
+
+    public function actionAssignAdmin(string $email): int
+    {
+        $user = User::findOne(['email' => $email]);
+
+        if (!$user) {
+            $this->stderr("User with this email: {$email} not found.\n");
+            return 1;
+        }
+
+        $auth = \Yii::$app->authManager;
+
+        $admin = $auth->getRole('admin');
+
+        if (!$admin) {
+            $this->stderr("Role 'admin' does not exist. Run rbac/init first.\n");
+            return 1;
+        }
+        
+        if (!$this->confirm("Are you sure? Assign admin role to {$email}?")) {
+            return 0;
+        }
+
+        $auth->revokeAll($user->id);
+        $auth->assign($admin, $user->id);
+
+        $this->stdout("Admin role assigned to {$user->username}.\n");
+
+        return 0;
     }
 }
