@@ -47,3 +47,6 @@ frontend.md
 .env.local
 .env.*.local
 .env.prod
+
+# ide files
+common/config/__autocomplete.php

@@ -52,8 +52,8 @@ return [
                 'host' => $_ENV['MAILER_HOST'],
                 'port' => (int) $_ENV['MAILER_PORT'],
                 'encryption' => $_ENV['MAILER_ENCRYPTION'] ?: null,
-                'username' => $_ENV['MAILER_USERNAME'],
-                'password' => $_ENV['MAILER_PASSWORD'],
+                'username' => $_ENV['MAILER_USERNAME'] ?? null,
+                'password' => $_ENV['MAILER_PASSWORD'] ?? null,
             ],
             
             'messageConfig' => [

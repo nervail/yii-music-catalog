@@ -11,11 +11,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
 
-RUN composer install \
-    --prefer-dist \
-    --no-interaction \
-    --optimize-autoloader
-
 COPY docker/apache/backend.conf /etc/apache2/sites-available/backend.conf
 
 RUN a2ensite backend.conf \
