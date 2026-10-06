@@ -42,11 +42,10 @@ phpunit.phar
 frontend.md
 
 # Environment / secrets
-.env
-.env.dev
-.env.local
-.env.*.local
-.env.prod
+.env.*
+!.env.example
 
 # ide files
 common/config/__autocomplete.php
+
++*.save

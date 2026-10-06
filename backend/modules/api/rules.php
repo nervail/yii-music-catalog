@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'OPTIONS <path:.*>' => 'cors/index',
+
     'GET me' => 'auth/me',
     'GET me/subscriptions' => 'subscription/me',
 

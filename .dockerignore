@@ -2,6 +2,8 @@
 .github
 
 .env
+.env.*
+.env.example
 
 vendor/
 node_modules/
@@ -12,3 +14,7 @@ runtime/
 frontend/dist/
 
 docker-compose.yml
+compose.dev.yml
+compose.prod.yml
+
+*.log

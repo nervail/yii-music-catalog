@@ -10,6 +10,7 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Serializer;
 use yii\web\NotFoundHttpException;
 use yii\web\UnprocessableEntityHttpException;
+use yii\filters\Cors;
 
 class BaseApiController extends Controller
 {
@@ -25,6 +26,29 @@ class BaseApiController extends Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
+
+	$verbFilter = $behaviors['verbFilter'];
+	unset($behaviors['verbFilter']);
+
+    $behaviors['corsFilter'] = [
+        'class' => Cors::class,
+        'cors' => [
+            'Origin' => [$_ENV['FRONTEND_URL']],
+            'Access-Control-Request-Method' => [
+                'GET',
+                'POST',
+                'PUT',
+                'PATCH',
+                'DELETE',
+                'OPTIONS',
+            ],
+            'Access-Control-Request-Headers' => ['*'],
+            'Access-Control-Allow-Credentials' => true,
+            'Access-Control-Max-Age' => 86400,
+        ],
+    ];
+
+	$behaviors['verbFilter'] = $verbFilter;
 
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::class,
