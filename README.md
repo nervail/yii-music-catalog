@@ -84,7 +84,7 @@ Yii2 + Apache
 git clone <repository-url>
 cd yii-music-catalog
 
-cp .env.example .env.dev
+cp .env.dev.example .env.dev
 ```
 
 Заполните значения `CHANGE_ME` в `.env.dev`, после чего:
