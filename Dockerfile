@@ -19,7 +19,7 @@ RUN composer install \
     --optimize-autoloader
 
 COPY . .
-
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/production.ini
 COPY docker/apache/backend.conf /etc/apache2/sites-available/backend.conf
 
 RUN a2enmod rewrite \
