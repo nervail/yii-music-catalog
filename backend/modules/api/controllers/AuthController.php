@@ -2,6 +2,7 @@
 
 namespace backend\modules\api\controllers;
 
+use backend\behaviors\RateLimitBehavior;
 use backend\modules\api\controllers\BaseApiController;
 use backend\modules\api\forms\LoginForm;
 use backend\modules\api\services\AuthService;
@@ -28,7 +29,36 @@ class AuthController extends BaseApiController
 
         $behaviors['authenticator']['except'] = [
             'login',
-        ]; 
+        ];
+
+        $behaviors['rateLimiter'] = [
+            'class' => RateLimitBehavior::class,
+
+            'actions' => [
+                'login' => [
+                    'ip' => [
+                        'limit' => 5,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+
+                    'username' => [
+                        'limit' => 5,
+                        'window' => 60,
+                        'identifier' => function () {
+                            $body = \Yii::$app->request->getBodyParams();
+
+                            $username = trim($body['username'] ?? '');
+
+                            return $username !== ''
+                                ? strtolower($username)
+                                : null;
+                        },
+                    ],
+                ],
+            ],
+        ];
 
         return $behaviors;
     }

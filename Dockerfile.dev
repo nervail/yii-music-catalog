@@ -16,6 +16,4 @@ COPY docker/apache/backend.conf /etc/apache2/sites-available/backend.conf
 RUN a2ensite backend.conf \
     && a2dissite 000-default.conf
 
-RUN chown -R www-data:www-data /var/www/html
-
 EXPOSE 80

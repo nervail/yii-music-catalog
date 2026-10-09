@@ -3,6 +3,7 @@
 use backend\assets\AdminLteAsset;
 use backend\assets\AppAsset;
 use backend\widgets\ToastAlert;
+use yii\bootstrap5\Html;
 
 AdminLteAsset::register($this);
 AppAsset::register($this);
@@ -19,7 +20,7 @@ $this->beginPage();
 
     <?php $this->registerCsrfMetaTags() ?>
 
-    <title><?= $this->title ?></title>
+    <title><?= Html::encode($this->title) ?></title>
 
     <?php $this->head() ?>
 </head>

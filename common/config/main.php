@@ -18,6 +18,10 @@ return [
             'class' => \yii\caching\FileCache::class,
         ],
 
+        'mutex' => [
+            'class' => \yii\mutex\MysqlMutex::class,
+        ],
+
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],

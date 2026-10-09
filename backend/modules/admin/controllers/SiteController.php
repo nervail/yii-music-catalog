@@ -2,10 +2,11 @@
 
 namespace backend\modules\admin\controllers;
 
+use backend\behaviors\RateLimitBehavior;
 use backend\modules\admin\forms\LoginForm;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -54,10 +55,40 @@ class SiteController extends Controller
                     throw new \yii\web\ForbiddenHttpException('У вас нет доступа');
                 }
             ],
+            
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                ],
+            ],
+
+            'rateLimiter' => [
+                'class' => RateLimitBehavior::class,
+
+                'actions' => [
+                    'login' => [
+                        'ip' => [
+                            'limit' => 5,
+                            'window' => 60,
+                            'identifier' => fn() =>
+                                \Yii::$app->request->getRemoteIP(),
+                        ],
+
+                        'username' => [
+                            'limit' => 5,
+                            'window' => 60,
+                            'identifier' => function () {
+                                $username = trim(
+                                    \Yii::$app->request->post('username', '')
+                                );
+
+                                return $username !== ''
+                                    ? strtolower($username)
+                                    : null;
+                            },
+                        ],
+                    ],
                 ],
             ],
         ];

@@ -2,20 +2,13 @@
 
 namespace backend\modules\api\controllers;
 
+use backend\behaviors\RateLimitBehavior;
 use backend\modules\api\controllers\BaseApiController;
-use backend\modules\api\forms\LoginForm;
 use backend\modules\api\forms\PasswordResetRequestForm;
-use backend\modules\api\forms\ResendVerificationEmailForm;
 use backend\modules\api\forms\ResetPasswordForm;
-use backend\modules\api\forms\SignupForm;
-use backend\modules\api\forms\VerifyEmailForm;
-use backend\modules\api\services\AuthService;
 use backend\modules\api\services\PasswordResetService;
-use backend\modules\api\services\SignupService;
-use backend\modules\api\services\VerifyService;
 use common\entities\User;
 use Yii;
-use yii\web\BadRequestHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\web\UnprocessableEntityHttpException;
 
@@ -43,6 +36,53 @@ class ResetController extends BaseApiController
             'reset-password', 
             'check-reset-token',
         ]; 
+
+        $behaviors['rateLimiter'] = [
+            'class' => RateLimitBehavior::class,
+
+            'actions' => [
+                'request-password-reset' => [
+                    'ip' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+
+                    'email' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => function () {
+                            $body = \Yii::$app->request->getBodyParams();
+
+                            $email = trim($body['email'] ?? '');
+
+                            return $email !== ''
+                                ? strtolower($email)
+                                : null;
+                        },
+                    ],
+                ],
+
+                'check-reset-token' => [
+                    'ip' => [
+                        'limit' => 10,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+                ],
+
+                'reset-password' => [
+                    'ip' => [
+                        'limit' => 5,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+                ],
+            ],
+        ];
 
         return $behaviors;
     }

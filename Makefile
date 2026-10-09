@@ -3,7 +3,6 @@ dev:
 
 dev-build:
 	composer install --prefer-dist --no-interaction --optimize-autoloader
-	sudo chown -R www-data:www-data .
 	docker compose --env-file .env.dev -f compose.dev.yml up -d --build
 
 dev-down:

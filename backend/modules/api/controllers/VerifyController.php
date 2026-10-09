@@ -8,7 +8,7 @@ use backend\modules\api\forms\VerifyEmailForm;
 use backend\modules\api\services\VerifyService;
 use Yii;
 use yii\web\BadRequestHttpException;
-use yii\web\TooManyRequestsHttpException;
+use backend\behaviors\RateLimitBehavior;
 
 /**
  * Site controller
@@ -32,7 +32,45 @@ class VerifyController extends BaseApiController
         $behaviors['authenticator']['except'] = [
             'verify-email',
             'resend-verification-email',
-        ]; 
+        ];
+
+        $behaviors['rateLimiter'] = [
+            'class' => RateLimitBehavior::class,
+
+            'actions' => [
+                'verify-email' => [
+                    'ip' => [
+                        'limit' => 10,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+                ],
+
+                'resend-verification-email' => [
+                    'ip' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            \Yii::$app->request->getRemoteIP(),
+                    ],
+
+                    'email' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => function () {
+                            $body = \Yii::$app->request->getBodyParams();
+
+                            $email = trim($body['email'] ?? '');
+
+                            return $email !== ''
+                                ? strtolower($email)
+                                : null;
+                        },
+                    ],
+                ],
+            ],
+        ];
 
         return $behaviors;
     }
@@ -68,21 +106,7 @@ class VerifyController extends BaseApiController
         $form = new ResendVerificationEmailForm();
 
         if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
-
-            $cacheKey = 'resend-verification:' . hash(
-                'sha256',
-                strtolower(trim($form->email))
-            );
-
-            if (Yii::$app->cache->get($cacheKey)) {
-                throw new TooManyRequestsHttpException(
-                    'Please wait before requesting another email.'
-                );
-            }
-
             $this->verifyService->resendVerificationEmail($form);
-
-            Yii::$app->cache->set($cacheKey, true, 60);
 
             return $this->success([
                 'message' => 'If such email exists, we have sent a mail.'

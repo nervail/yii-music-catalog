@@ -2,6 +2,7 @@
 
 namespace backend\modules\api\controllers;
 
+use backend\behaviors\RateLimitBehavior;
 use backend\modules\api\controllers\BaseApiController;
 use backend\modules\api\forms\SignupForm;
 use backend\modules\api\services\SignupService;
@@ -28,7 +29,50 @@ class SignupController extends BaseApiController
 
         $behaviors['authenticator']['except'] = [
             'index',
-        ]; 
+        ];
+
+        $behaviors['rateLimiter'] = [
+            'class' => RateLimitBehavior::class,
+
+            'actions' => [
+                'index' => [
+                    'ip' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => fn() =>
+                            Yii::$app->request->getRemoteIP(),
+                    ],
+
+                    'email' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => function () {
+                            $body = Yii::$app->request->getBodyParams();
+
+                            $email = trim($body['email'] ?? '');
+
+                            return $email !== ''
+                                ? strtolower($email)
+                                : null;
+                        },
+                    ],
+
+                    'username' => [
+                        'limit' => 3,
+                        'window' => 60,
+                        'identifier' => function () {
+                            $body = Yii::$app->request->getBodyParams();
+
+                            $username = trim($body['username'] ?? '');
+
+                            return $username !== ''
+                                ? strtolower($username)
+                                : null;
+                        },
+                    ],
+                ],
+            ],
+        ];
 
         return $behaviors;
     }
