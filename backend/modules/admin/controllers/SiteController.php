@@ -72,7 +72,7 @@ class SiteController extends Controller
                             'limit' => 5,
                             'window' => 60,
                             'identifier' => fn() =>
-                                \Yii::$app->request->getRemoteIP(),
+                                \Yii::$app->request->getUserIP(),
                         ],
 
                         'username' => [

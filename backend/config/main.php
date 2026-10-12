@@ -30,6 +30,7 @@ $config = [
         'request' => [
             'csrfParam' => '_csrf-backend',
             'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'],
+	    'trustedHosts' => ['172.18.0.0/16'],
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],

@@ -46,7 +46,7 @@ class ResetController extends BaseApiController
                         'limit' => 3,
                         'window' => 60,
                         'identifier' => fn() =>
-                            \Yii::$app->request->getRemoteIP(),
+                            \Yii::$app->request->getUserIP(),
                     ],
 
                     'email' => [
@@ -69,7 +69,7 @@ class ResetController extends BaseApiController
                         'limit' => 10,
                         'window' => 60,
                         'identifier' => fn() =>
-                            \Yii::$app->request->getRemoteIP(),
+                            \Yii::$app->request->getUserIP(),
                     ],
                 ],
 
@@ -78,7 +78,7 @@ class ResetController extends BaseApiController
                         'limit' => 5,
                         'window' => 60,
                         'identifier' => fn() =>
-                            \Yii::$app->request->getRemoteIP(),
+                            \Yii::$app->request->getUserIP(),
                     ],
                 ],
             ],

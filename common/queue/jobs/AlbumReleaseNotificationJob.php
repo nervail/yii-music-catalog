@@ -20,7 +20,6 @@ class AlbumReleaseNotificationJob extends BaseObject implements JobInterface
                 'album'     => $this->albumData,
             ]
         )
-        ->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name])
         ->setTo($this->userEmail)
         ->setSubject("Новый релиз от " . $this->albumData['artistName'] . "!")
         ->send();
